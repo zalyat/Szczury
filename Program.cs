@@ -1,4 +1,5 @@
 ﻿using System;
+using Szczury.Core;
 
 namespace Szczury
 {

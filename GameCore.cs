@@ -21,17 +21,24 @@ namespace Szczury.Core
             // TODO: Add your initialization logic here
 
             base.Initialize();
+
+            _graphics.IsFullScreen = false;
+            _graphics.PreferredBackBufferWidth = /*640*/ 1280;
+            _graphics.PreferredBackBufferHeight = /*480*/ 720;
+            _graphics.ApplyChanges();
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            TextureSet.Initialize(Content);
+            GameState.ChangeState(new GameplayState());
             // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
         {
+            Util.gameTime = gameTime;
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -41,7 +48,7 @@ namespace Szczury.Core
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
