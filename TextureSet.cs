@@ -12,9 +12,12 @@ namespace Szczury
         private static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
         private static ContentManager contentManager;
 
+        public static SpriteFont debugFont;
+
         public static void Initialize(ContentManager contentManager)
         {
             TextureSet.contentManager = contentManager;
+            TextureSet.debugFont = contentManager.Load<SpriteFont>("debugFont");
 
             Add("default", "default");
             Add("dirt_block", "tile_dirt");

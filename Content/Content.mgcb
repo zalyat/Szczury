@@ -25,6 +25,13 @@
 /processorParam:TextureFormat=Color
 /build:default.png
 
+#begin File.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:File.spritefont;debugFont.spritefont
+
 #begin tile_dirt.png
 /importer:TextureImporter
 /processor:TextureProcessor

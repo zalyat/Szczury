@@ -14,5 +14,10 @@ namespace Szczury
         }
 
         public static int tileSize = 16;
+
+        public static Vector2 TilePosToWorldPos(Point location)
+        {
+            return new Vector2(location.X * tileSize, location.Y * tileSize);
+        }
     }
 }

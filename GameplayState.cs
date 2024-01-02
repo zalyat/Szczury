@@ -14,18 +14,22 @@ namespace Szczury
 
         public void Draw(SpriteBatch _spriteBatch)
         {
-            foreach(GameObject go in gameObjects)
+            //tiles
+            for (ushort y = 0; y < TileWorld.height; y++)
             {
-                go.Draw(_spriteBatch);
-            }
-
-            for(ushort y = 0; y < TileWorld.height; y++)
-            {
-                for(ushort x = 0; x < TileWorld.width; x++)
+                for (ushort x = 0; x < TileWorld.width; x++)
                 {
                     tileWorld.DrawTile(x, y, _spriteBatch);
                 }
             }
+
+            //game objects
+            foreach (GameObject go in gameObjects)
+            {
+                go.Draw(_spriteBatch);
+            }
+
+            
         }
 
         public void Initialize(ContentManager content)
