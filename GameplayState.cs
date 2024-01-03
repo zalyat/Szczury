@@ -12,6 +12,8 @@ namespace Szczury
         private List<GameObject> gameObjects = new List<GameObject>();
         public TileWorld tileWorld = new TileWorld();
 
+        private PlayerGameObject player;
+
         public void Draw(SpriteBatch _spriteBatch)
         {
             //tiles
@@ -28,7 +30,6 @@ namespace Szczury
             {
                 go.Draw(_spriteBatch);
             }
-
             
         }
 
@@ -41,7 +42,7 @@ namespace Szczury
 
         public void Start()
         {
-            CreateGameObject(new PlayerGameObject(new Vector2(5f, 10f)));
+            player = CreateGameObject(new PlayerGameObject(new Vector2(5f, 10f))) as PlayerGameObject;
         }
 
         public void Update(GameTime gameTime)
@@ -50,11 +51,14 @@ namespace Szczury
             {
                 go.Update(gameTime);
             }
+
+            Camera.CenterCameraOn(player.Center);
         }
 
-        public void CreateGameObject(GameObject gameObject)
+        public GameObject CreateGameObject(GameObject gameObject)
         {
             gameObjects.Add(gameObject);
+            return gameObject;
         }
     }
 }

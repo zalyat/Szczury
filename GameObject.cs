@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace Szczury
 {
@@ -27,7 +28,12 @@ namespace Szczury
         {
             textureBox.X = (int)Math.Floor(position.X);
             textureBox.Y = (int)Math.Floor(position.Y);
-            spriteBatch.Draw(mainTexture, textureBox, Color.Magenta);
+            spriteBatch.Draw(mainTexture, new Rectangle(
+                new Point(textureBox.X - (int)MathF.Ceiling(Camera.cameraPosition.X),
+                          textureBox.Y - (int)MathF.Ceiling(Camera.cameraPosition.Y)
+                ), new Point(textureBox.Width, textureBox.Height)), Color.Magenta);
+
+            //Debug.WriteLine($"{textureBox.X + (int)MathF.Ceiling(Camera.cameraPosition.X)}   |   {textureBox.Y + (int)MathF.Ceiling(Camera.cameraPosition.Y)}");
         }
 
         public virtual void Update(GameTime gameTime)

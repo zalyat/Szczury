@@ -26,7 +26,8 @@ namespace Szczury
                 return;
             }
             _spriteBatch.Draw(tile.blockType.mainTexture,
-                new Rectangle(new Point(x * Util.tileSize, y * Util.tileSize),
+                new Rectangle(new Point(x * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.X), 
+                y * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.Y)),
                 new Point(Util.tileSize, Util.tileSize)),
                 Color.White);            
         }

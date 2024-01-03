@@ -10,6 +10,8 @@ namespace Szczury
 {
     public class PlayerGameObject : GameObject
     {
+        private bool flyingCheat = false;
+
         public float gravity = -400f;
         public float baseWalkingSpeed = 50f;
         public float baseJumpForce = 9000f;
@@ -57,6 +59,11 @@ namespace Szczury
             spriteBatch.DrawString(TextureSet.debugFont, $"gravityPull: {gravityPull}", new Vector2(500, 20), Color.NavajoWhite);
 
             spriteBatch.DrawString(TextureSet.debugFont, $"PhysicsVelocityY: {PhysicsVelocityY}", new Vector2(500, 40), Color.NavajoWhite);
+
+            if(flyingCheat)
+            spriteBatch.DrawString(TextureSet.debugFont, $"flyingCheat enabled", new Vector2(1000, 0), Color.NavajoWhite);
+
+            spriteBatch.DrawString(TextureSet.debugFont, $"cameraPosition: X: {Camera.cameraPosition.X}     Y: {Camera.cameraPosition.Y}", new Vector2(0, 100), Color.White);
         }
 
         public override void Start()
@@ -83,6 +90,12 @@ namespace Szczury
 
         public void Physics()
         {
+            if(flyingCheat == false)
+                VelocityPhysics();
+        }
+
+        public void VelocityPhysics()
+        {
             position.Y -= PhysicsVelocityY;
             if (isGrounded() == false)
             {
@@ -90,11 +103,10 @@ namespace Szczury
                 if (gravityPull < gravity) gravityPull = gravity;
             }
 
-            if(isGrounded() == true)
+            if (isGrounded() == true)
             {
                 gravityPull = 0;
             }
-
         }
 
         public float PhysicsVelocityY { get {
@@ -112,13 +124,16 @@ namespace Szczury
             if (state.IsKeyDown(Keys.A))
                 position.X -= baseWalkingSpeed * Util.deltaTime;
 
-            /*if (state.IsKeyDown(Keys.W))
-                position.Y -= baseWalkingSpeed * Util.deltaTime;*/
+            if (state.IsKeyDown(Keys.W) && flyingCheat == true)
+                position.Y -= baseWalkingSpeed * Util.deltaTime;
 
             if (state.IsKeyDown(Keys.Space) && isGrounded())
                 Jump();
             if (state.IsKeyDown(Keys.S))
                 position.Y += baseWalkingSpeed * Util.deltaTime;
+
+            if (state.IsKeyDown(Keys.F1))
+                flyingCheat = !flyingCheat;
         }
 
         public void Jump()
@@ -126,7 +141,10 @@ namespace Szczury
             gravityPull += baseJumpForce * Util.deltaTime;
         }
 
-
+        public Vector2 Center
+        {
+            get => new Vector2(position.X + 8, position.Y + 24);
+        }
 
         public Point PositionInTiles
         {
@@ -155,6 +173,9 @@ namespace Szczury
 
         public bool isGrounded()
         {
+            if (flyingCheat == true)
+                return false;
+
             //if (tileBelow == null || tileBelow.Value.blockType == BlocksRegistry.GetBlock("Air")) return false;
             if ((_world.isAir(_world.WorldPositionToTilePosition(new Vector2(position.X, BottomPosition.Y))) == false
                 || _world.isAir(_world.WorldPositionToTilePosition(new Vector2(position.X + 8, BottomPosition.Y))) == false
@@ -175,7 +196,7 @@ namespace Szczury
 
         public void TileBelowUnstick()
         {
-            if (tileBelow == null || tileBelow.Value.blockType == BlocksRegistry.GetBlock("Air")) return;
+            if (flyingCheat == true || tileBelow == null || tileBelow.Value.blockType == BlocksRegistry.GetBlock("Air")) return;
 
             if(FeetToGroundDistance < 0)
             {
