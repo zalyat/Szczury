@@ -78,6 +78,7 @@ namespace Szczury
             return true;
         }
 
+        ///<summary>Used for colliders etc.</summary> <returns>Rectangle that is boundaries for a tile</returns>
         public Rectangle GetTileRectangle(Point location)
         {
             if (isInWorldBoundaries(location) == false) return new Rectangle();

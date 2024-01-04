@@ -33,7 +33,6 @@ namespace Szczury.Core
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             TextureSet.Initialize(Content);
             GameState.ChangeState(new GameplayState());
-            // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)

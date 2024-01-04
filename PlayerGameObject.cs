@@ -15,7 +15,7 @@ namespace Szczury
         public float gravity = -400f;
         public float baseWalkingSpeed = 50f;
         public float baseJumpForce = 9000f;
-        public TileWorld.Tile? tileBelow;
+        public TileWorld.Tile? tileBelow;/// <summary>A tile that is exactly 1 cell below the player</summary>
 
         public float FinalWalkingSpeed
         {
@@ -141,6 +141,9 @@ namespace Szczury
             gravityPull += baseJumpForce * Util.deltaTime;
         }
 
+        /// <summary>
+        /// Center of the player's GameObject
+        /// </summary>
         public Vector2 Center
         {
             get => new Vector2(position.X + 8, position.Y + 24);
@@ -151,12 +154,18 @@ namespace Szczury
             get => _world.WorldPositionToTilePosition(new Vector2(position.X + 8, position.Y - 8));
         }
 
-        public Vector2 FeetPosition //y position measured relatively to bottom of the player
+        /// <summary>
+        /// y position measured relatively to feet of the player
+        /// </summary> <returns>World pos of player's feet position (2x tile pos, 3rd tile of the player)</returns>
+        public Vector2 FeetPosition //y 
         {
             get => new Vector2(position.X + 8, position.Y + 32);
         }
 
-        public Vector2 BottomPosition //y position measured relatively to bottom of the player
+        /// <summary>
+        /// y position measured relatively to bottom of the player (Lower than FeetPosition)
+        /// </summary>
+        public Vector2 BottomPosition
         {
             get => new Vector2(position.X + 8, position.Y + 40);
         }
@@ -166,7 +175,10 @@ namespace Szczury
             get => _world.WorldPositionToTilePosition(FeetPosition);
         }
 
-        public bool isCollidingWith(Rectangle rectangle) //simple check
+        /// <summary>
+        /// Simple collision check using rectangle.Intersects
+        /// </summary>
+        public bool isCollidingWith(Rectangle rectangle) 
         {
             return textureBox.Intersects(rectangle);
         }
@@ -177,9 +189,9 @@ namespace Szczury
                 return false;
 
             //if (tileBelow == null || tileBelow.Value.blockType == BlocksRegistry.GetBlock("Air")) return false;
-            if ((_world.isAir(_world.WorldPositionToTilePosition(new Vector2(position.X, BottomPosition.Y))) == false
-                || _world.isAir(_world.WorldPositionToTilePosition(new Vector2(position.X + 8, BottomPosition.Y))) == false
-                || _world.isAir(_world.WorldPositionToTilePosition(new Vector2(position.X + 16, BottomPosition.Y))) == false)
+            if ((tileAirCheck(position.X, BottomPosition.Y) == false
+                || tileAirCheck(position.X + 8, BottomPosition.Y) == false
+                || tileAirCheck(position.X + 16, BottomPosition.Y) == false)
                 && (FeetToGroundDistance < 0.1f || FeetToGroundDistance < 0))
                 return true;
 
@@ -204,6 +216,21 @@ namespace Szczury
             }
         }
 
+        /// <summary>
+        /// Distance between Feet position and next bottom tile (Warning: this doesn't include tileBelow)
+        /// </summary>
         private float FeetToGroundDistance { get => (PositionInTiles.Y + 2) * Util.tileSize - FeetPosition.Y; }
+
+
+        /// <summary>
+        /// A faster way for doing _world.isAir(_...) for world position
+        /// </summary>
+        /// <returns>boolean = is tile in this world pos Air?</returns>
+        private bool tileAirCheck(Vector2 atPosition) => _world.isAir(_world.WorldPositionToTilePosition(atPosition));
+        /// <summary>
+        /// A faster way for doing _world.isAir(_...) for world position
+        /// </summary>
+        /// <returns>boolean = is tile in this world pos Air?</returns>
+        private bool tileAirCheck(float xPos, float yPos) => tileAirCheck(new Vector2(xPos, yPos));
     }
 }
