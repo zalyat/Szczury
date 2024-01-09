@@ -32,10 +32,6 @@ namespace Szczury
         private float gravityPullTime = 0.3f;
 
 
-
-
-
-
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
@@ -60,7 +56,7 @@ namespace Szczury
 
             spriteBatch.DrawString(TextureSet.debugFont, $"PhysicsVelocityY: {PhysicsVelocityY}", new Vector2(500, 40), Color.NavajoWhite);
 
-            if(flyingCheat)
+            if (flyingCheat)
             spriteBatch.DrawString(TextureSet.debugFont, $"flyingCheat enabled", new Vector2(1000, 0), Color.NavajoWhite);
 
             spriteBatch.DrawString(TextureSet.debugFont, $"cameraPosition: X: {Camera.cameraPosition.X}     Y: {Camera.cameraPosition.Y}", new Vector2(0, 100), Color.White);
@@ -74,15 +70,20 @@ namespace Szczury
 
             GameplayState gs = GameState.currentState as GameplayState;
             _world = gs.tileWorld;
+
+            //stuff below is only for testing purposes and will be removed in the closest future
             _world.ChangeTile(new Point(PositionInTiles.X + 10, PositionInTiles.Y + 2), BlocksRegistry.GetBlock("Dirt"));
             _world.ChangeTile(new Point(PositionInTiles.X + 9, PositionInTiles.Y + 1), BlocksRegistry.GetBlock("Dirt"));
             _world.ChangeTile(new Point(PositionInTiles.X + 8, PositionInTiles.Y), BlocksRegistry.GetBlock("Dirt"));
+            _world.ChangeTile(new Point(PositionInTiles.X + 7, PositionInTiles.Y - 1), BlocksRegistry.GetBlock("Dirt"));
+            _world.ChangeTile(new Point(PositionInTiles.X + 6, PositionInTiles.Y - 2), BlocksRegistry.GetBlock("Dirt"));
+            _world.ChangeTile(new Point(PositionInTiles.X + 5, PositionInTiles.Y - 3), BlocksRegistry.GetBlock("Dirt"));
+            _world.ChangeTile(new Point(PositionInTiles.X + 4, PositionInTiles.Y - 3), BlocksRegistry.GetBlock("Dirt"));
         }
 
         public override void Update(GameTime gameTime)
         {            
-            Physics();
-            TileBelowUnstick();
+            Physics();            
             PlayerInput();
             SetTileBelow();
             //_world.ChangeTile(new Point(PositionInTiles.X, PositionInTiles.Y + 3), BlocksRegistry.GetBlock("Air"));
@@ -90,8 +91,12 @@ namespace Szczury
 
         public void Physics()
         {
-            if(flyingCheat == false)
+            if (flyingCheat == false)
+            {
                 VelocityPhysics();
+                CollisionDetection();
+                TileBelowUnstuck();               
+            }
         }
 
         public void VelocityPhysics()
@@ -183,6 +188,19 @@ namespace Szczury
             return textureBox.Intersects(rectangle);
         }
 
+        /// <summary>
+        /// Tile variant. Will return 'false' if the tile is air type
+        /// </summary>
+        /// <param name="location">Tile position</param>
+        private bool isCollidingWith(Point location)
+        {
+
+            if (isCollidingWith(_world.GetTileRectangle(location)) == true && tileAirCheck(location) == false)
+                return true;
+
+            return false;
+        }
+
         public bool isGrounded()
         {
             if (flyingCheat == true)
@@ -198,7 +216,38 @@ namespace Szczury
             return false;
         }
 
-        public void SetTileBelow() // get tile that is below the player
+        /// <summary>
+        /// Detect collision and unstuck the player from the wall/ceiling
+        /// TO DO:
+        /// Fix ceiling unstucking
+        /// </summary>
+        private void CollisionDetection() //collision check with walls and ceiling.
+        {
+            for (int y = -1; y < 3; y++) // off by 1 included
+                for (int x = -2; x < 3; x++) // off by 1 included
+                {
+                    Point point = new Point(PositionInTiles.X + x, PositionInTiles.Y + y);
+                    if (_world.isInWorldBoundaries(point) == false) continue; //must be here, because of TilePositionToWorldPosition() from TileWorld.cs
+                    if (isCollidingWith(point) == false) continue;
+
+                    Rectangle rect = Rectangle.Intersect(textureBox, _world.GetTileRectangle(point));
+
+                    if (PositionInTiles.X < point.X)
+                    {
+                        position.X -= rect.Width;
+                    }
+                    if (PositionInTiles.X > point.X)
+                    {
+                        position.X += rect.Width;
+                    }        
+                    if(PositionInTiles.Y < point.Y)
+                    {
+                        position.Y += rect.Height;
+                    }
+                }
+        }       
+
+        private void SetTileBelow() // get tile that is below the player
         {
             Point tileBelowCoord;
             tileBelowCoord.X = (int)PositionInTiles.X;
@@ -206,9 +255,9 @@ namespace Szczury
             tileBelow = _world.GetTile(tileBelowCoord);
         }
 
-        public void TileBelowUnstick()
+        private void TileBelowUnstuck()
         {
-            if (flyingCheat == true || tileBelow == null || tileBelow.Value.blockType == BlocksRegistry.GetBlock("Air")) return;
+            if (tileBelow == null || tileBelow.Value.blockType == BlocksRegistry.GetBlock("Air")) return;
 
             if(FeetToGroundDistance < 0)
             {
@@ -232,5 +281,10 @@ namespace Szczury
         /// </summary>
         /// <returns>boolean = is tile in this world pos Air?</returns>
         private bool tileAirCheck(float xPos, float yPos) => tileAirCheck(new Vector2(xPos, yPos));
+        /// <summary>
+        /// Tile variant
+        /// </summary>
+        /// <returns></returns>
+        private bool tileAirCheck(Point location) => _world.isAir(location);
     }
 }

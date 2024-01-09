@@ -14,6 +14,7 @@ namespace Szczury
         {
             public Block blockType;
             public float damage; //if damage is higher than hardness, the tile will break
+            public bool debugHighlight;
         }
 
         private Tile[,] world = new Tile[width, height];
@@ -25,11 +26,14 @@ namespace Szczury
             {
                 return;
             }
+            Color color = Color.White;
+            if (tile.debugHighlight == true) color = Color.Red;
             _spriteBatch.Draw(tile.blockType.mainTexture,
                 new Rectangle(new Point(x * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.X), 
                 y * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.Y)),
                 new Point(Util.tileSize, Util.tileSize)),
-                Color.White);            
+                color);
+            tile.debugHighlight = false;
         }
 
         public void Initialize()
@@ -78,13 +82,28 @@ namespace Szczury
             return true;
         }
 
+        public void SetDebugHighlight(Point location)
+        {
+            if (isInWorldBoundaries(location) == true)
+                world[location.X, location.Y].debugHighlight = !world[location.X, location.Y].debugHighlight;
+        }
+
         ///<summary>Used for colliders etc.</summary> <returns>Rectangle that is boundaries for a tile</returns>
         public Rectangle GetTileRectangle(Point location)
         {
             if (isInWorldBoundaries(location) == false) return new Rectangle();
             Point topLeft = new Point(location.X * Util.tileSize, location.Y * Util.tileSize);
-            Point bottomRight = new Point(location.X * Util.tileSize + Util.tileSize, location.Y * Util.tileSize + Util.tileSize);
-            return new Rectangle(topLeft, bottomRight);
+            return new Rectangle(topLeft, new Point(Util.tileSize, Util.tileSize));
+        }
+
+        /// <summary>
+        /// Warning! Use this only after making sure you are not giving location that is out of boundaries!
+        /// </summary>
+        /// <returns>World position of a tile (top-left corner is the origin)</returns>
+        public Vector2 TilePositionToWorldPosition(Point location)
+        {
+            if (isInWorldBoundaries(location) == false) return new Vector2(0, 0);
+            return new Vector2(location.X * Util.tileSize, location.Y * Util.tileSize);
         }
     }
 }
