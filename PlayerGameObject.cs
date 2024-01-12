@@ -10,27 +10,32 @@ namespace Szczury
 {
     public class PlayerGameObject : GameObject
     {
-        private bool flyingCheat = false;
-
-        public float gravity = -400f;
-        public float baseWalkingSpeed = 50f;
-        public float baseJumpForce = 9000f;
-        public TileWorld.Tile? tileBelow;/// <summary>A tile that is exactly 1 cell below the player</summary>
-
-        public float FinalWalkingSpeed
-        {
-            get => baseWalkingSpeed;
-        }
-
         public PlayerGameObject(Vector2 startingPosition) : base(startingPosition)
         {
             textureBox = new Rectangle(new Point(0, 0), new Point(16, 48));
         }
 
-        private TileWorld _world;
+        public float gravity = -400f;
         private float gravityPull = 0f;
         private float gravityPullTime = 0.3f;
+        public float baseWalkingSpeed = 50f;
+        public float baseJumpForce = 9000f;
 
+        private TileWorld _world;
+        public TileWorld.Tile? tileBelow;/// <summary>A tile that is exactly 1 cell below the player</summary>
+
+       
+
+        private bool flyingCheat = false;
+        private bool flyingCheatKeyPressedLastFrame = false;
+
+
+
+
+        public float FinalWalkingSpeed
+        {
+            get => baseWalkingSpeed;
+        }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
@@ -85,6 +90,7 @@ namespace Szczury
         {            
             Physics();            
             PlayerInput();
+            KeyPressCheck();
             SetTileBelow();
             //_world.ChangeTile(new Point(PositionInTiles.X, PositionInTiles.Y + 3), BlocksRegistry.GetBlock("Air"));
         }
@@ -134,10 +140,10 @@ namespace Szczury
 
             if (state.IsKeyDown(Keys.Space) && isGrounded())
                 Jump();
-            if (state.IsKeyDown(Keys.S))
+            if (state.IsKeyDown(Keys.S) && flyingCheat == true)
                 position.Y += baseWalkingSpeed * Util.deltaTime;
 
-            if (state.IsKeyDown(Keys.F1))
+            if (state.IsKeyDown(Keys.F1) && flyingCheatKeyPressedLastFrame == false)
                 flyingCheat = !flyingCheat;
         }
 
@@ -287,5 +293,11 @@ namespace Szczury
         /// </summary>
         /// <returns></returns>
         private bool tileAirCheck(Point location) => _world.isAir(location);
+
+        private void KeyPressCheck()
+        {
+            KeyboardState state = Keyboard.GetState();
+            flyingCheatKeyPressedLastFrame = state.IsKeyDown(Keys.F1);
+        }
     }
 }
