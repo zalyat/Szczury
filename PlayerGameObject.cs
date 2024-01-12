@@ -240,8 +240,9 @@ namespace Szczury
                     {
                         position.X += rect.Width;
                     }        
-                    if(PositionInTiles.Y < point.Y)
+                    if(PositionInTiles.Y > point.Y)
                     {
+                        gravityPull = 0f;
                         position.Y += rect.Height;
                     }
                 }
