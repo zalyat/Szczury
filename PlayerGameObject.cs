@@ -13,6 +13,7 @@ namespace Szczury
         public PlayerGameObject(Vector2 startingPosition) : base(startingPosition)
         {
             textureBox = new Rectangle(new Point(0, 0), new Point(16, 48));
+            hitbox = new Rectangle(new Point(0, 0), new Point(16, 48));
         }
 
         public float gravity = -400f;
@@ -20,6 +21,10 @@ namespace Szczury
         private float gravityPullTime = 0.3f;
         public float baseWalkingSpeed = 50f;
         public float baseJumpForce = 9000f;
+
+        public float walkingInput = 0f;
+        private float walkingInputDecrease = 7f;
+        private float acceleration = 2f;
 
         private TileWorld _world;
         public TileWorld.Tile? tileBelow;/// <summary>A tile that is exactly 1 cell below the player</summary>
@@ -48,7 +53,7 @@ namespace Szczury
         public void DebugInfoDraw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(TextureSet.debugFont, 
-                $"X:{position.X}   Y:{position.Y}      |      worldPos: X: {PositionInTiles.X}   Y: {PositionInTiles.Y}",
+                $"X:{Position.X}   Y:{Position.Y}      |      worldPos: X: {PositionInTiles.X}   Y: {PositionInTiles.Y}",
                 new Vector2(0, 0), Color.NavajoWhite);
             spriteBatch.DrawString(TextureSet.debugFont, $"isGrounded: {isGrounded()}", new Vector2(0, 20), Color.NavajoWhite);
 
@@ -60,6 +65,7 @@ namespace Szczury
             spriteBatch.DrawString(TextureSet.debugFont, $"gravityPull: {gravityPull}", new Vector2(500, 20), Color.NavajoWhite);
 
             spriteBatch.DrawString(TextureSet.debugFont, $"PhysicsVelocityY: {PhysicsVelocityY}", new Vector2(500, 40), Color.NavajoWhite);
+            spriteBatch.DrawString(TextureSet.debugFont, $"PhysicsVelocityX: {PhysicsVelocityX}", new Vector2(300, 40), Color.NavajoWhite);
 
             if (flyingCheat)
             spriteBatch.DrawString(TextureSet.debugFont, $"flyingCheat enabled", new Vector2(1000, 0), Color.NavajoWhite);
@@ -71,28 +77,18 @@ namespace Szczury
         {
             base.Start();
 
-            position = new Vector2(0, 288);
+            SetPosition(TileWorld.width/2 * Util.tileSize, 288);
 
             GameplayState gs = GameState.currentState as GameplayState;
             _world = gs.tileWorld;
-
-            //stuff below is only for testing purposes and will be removed in the closest future
-            _world.ChangeTile(new Point(PositionInTiles.X + 10, PositionInTiles.Y + 2), BlocksRegistry.GetBlock("Dirt"));
-            _world.ChangeTile(new Point(PositionInTiles.X + 9, PositionInTiles.Y + 1), BlocksRegistry.GetBlock("Dirt"));
-            _world.ChangeTile(new Point(PositionInTiles.X + 8, PositionInTiles.Y), BlocksRegistry.GetBlock("Dirt"));
-            _world.ChangeTile(new Point(PositionInTiles.X + 7, PositionInTiles.Y - 1), BlocksRegistry.GetBlock("Dirt"));
-            _world.ChangeTile(new Point(PositionInTiles.X + 6, PositionInTiles.Y - 2), BlocksRegistry.GetBlock("Dirt"));
-            _world.ChangeTile(new Point(PositionInTiles.X + 5, PositionInTiles.Y - 3), BlocksRegistry.GetBlock("Dirt"));
-            _world.ChangeTile(new Point(PositionInTiles.X + 4, PositionInTiles.Y - 3), BlocksRegistry.GetBlock("Dirt"));
         }
 
         public override void Update(GameTime gameTime)
-        {            
-            Physics();            
+        {
+            Physics();
             PlayerInput();
             KeyPressCheck();
             SetTileBelow();
-            //_world.ChangeTile(new Point(PositionInTiles.X, PositionInTiles.Y + 3), BlocksRegistry.GetBlock("Air"));
         }
 
         public void Physics()
@@ -107,7 +103,8 @@ namespace Szczury
 
         public void VelocityPhysics()
         {
-            position.Y -= PhysicsVelocityY;
+            Move(PhysicsVelocityX * Util.deltaTime, 0f);
+            Move(0f, -PhysicsVelocityY);
             if (isGrounded() == false)
             {
                 gravityPull += gravity * gravityPullTime * Util.deltaTime;
@@ -117,7 +114,7 @@ namespace Szczury
             if (isGrounded() == true)
             {
                 gravityPull = 0;
-            }
+            }            
         }
 
         public float PhysicsVelocityY { get {
@@ -125,26 +122,35 @@ namespace Szczury
                 output += gravityPull * Util.deltaTime;
                 return output; } }
 
+        public float PhysicsVelocityX { get
+            {
+                float output = 0f;
+                output = MathHelper.Lerp(0, walkingInput, acceleration) * baseWalkingSpeed;
+                return output;
+            } }
 
         public void PlayerInput() //player input that will influence movement and position
         {
             KeyboardState state = Keyboard.GetState();
 
             if (state.IsKeyDown(Keys.D))
-                position.X += baseWalkingSpeed * Util.deltaTime;
-            if (state.IsKeyDown(Keys.A))
-                position.X -= baseWalkingSpeed * Util.deltaTime;
+                walkingInput += 1f * Util.deltaTime;
+            else if (state.IsKeyDown(Keys.A))
+                walkingInput -= 1f * Util.deltaTime;
+            else walkingInput = MathHelper.SmoothStep(walkingInput, 0f, walkingInputDecrease * Util.deltaTime); //deacceleration probably shouldn't be here (it shouldn't directly affect walkingInput)
 
             if (state.IsKeyDown(Keys.W) && flyingCheat == true)
-                position.Y -= baseWalkingSpeed * Util.deltaTime;
+                Move(0f, baseWalkingSpeed * Util.deltaTime);
 
             if (state.IsKeyDown(Keys.Space) && isGrounded())
                 Jump();
             if (state.IsKeyDown(Keys.S) && flyingCheat == true)
-                position.Y += baseWalkingSpeed * Util.deltaTime;
+                Move(0f, baseWalkingSpeed * Util.deltaTime);
 
             if (state.IsKeyDown(Keys.F1) && flyingCheatKeyPressedLastFrame == false)
                 flyingCheat = !flyingCheat;
+
+            Math.Clamp(walkingInput, -1f, 1f);
         }
 
         public void Jump()
@@ -157,12 +163,12 @@ namespace Szczury
         /// </summary>
         public Vector2 Center
         {
-            get => new Vector2(position.X + 8, position.Y + 24);
+            get => new Vector2(Position.X + 8, Position.Y + 24);
         }
 
         public Point PositionInTiles
         {
-            get => _world.WorldPositionToTilePosition(new Vector2(position.X + 8, position.Y - 8));
+            get => _world.WorldPositionToTilePosition(new Vector2(Position.X + 8, Position.Y - 8));
         }
 
         /// <summary>
@@ -170,7 +176,7 @@ namespace Szczury
         /// </summary> <returns>World pos of player's feet position (2x tile pos, 3rd tile of the player)</returns>
         public Vector2 FeetPosition //y 
         {
-            get => new Vector2(position.X + 8, position.Y + 32);
+            get => new Vector2(Position.X + 8, Position.Y + 32);
         }
 
         /// <summary>
@@ -178,7 +184,7 @@ namespace Szczury
         /// </summary>
         public Vector2 BottomPosition
         {
-            get => new Vector2(position.X + 8, position.Y + 40);
+            get => new Vector2(Position.X + 8, Position.Y + 40);
         }
 
         public Point FeetPositionInTiles //change it to tiles
@@ -191,7 +197,7 @@ namespace Szczury
         /// </summary>
         public bool isCollidingWith(Rectangle rectangle) 
         {
-            return textureBox.Intersects(rectangle);
+            return hitbox.Intersects(rectangle);
         }
 
         /// <summary>
@@ -213,9 +219,9 @@ namespace Szczury
                 return false;
 
             //if (tileBelow == null || tileBelow.Value.blockType == BlocksRegistry.GetBlock("Air")) return false;
-            if ((tileAirCheck(position.X, BottomPosition.Y) == false
-                || tileAirCheck(position.X + 8, BottomPosition.Y) == false
-                || tileAirCheck(position.X + 16, BottomPosition.Y) == false)
+            if ((tileAirCheck(Position.X+1, BottomPosition.Y) == false
+                || tileAirCheck(Position.X + 8, BottomPosition.Y) == false
+                || tileAirCheck(Position.X + 15, BottomPosition.Y) == false) //leave 1 pixel margin to prevent sticking to walls
                 && (FeetToGroundDistance < 0.1f || FeetToGroundDistance < 0))
                 return true;
 
@@ -236,29 +242,32 @@ namespace Szczury
                     if (_world.isInWorldBoundaries(point) == false) continue; //must be here, because of TilePositionToWorldPosition() from TileWorld.cs
                     if (isCollidingWith(point) == false) continue;
 
-                    Rectangle rect = Rectangle.Intersect(textureBox, _world.GetTileRectangle(point));
+                    Rectangle rect = Rectangle.Intersect(hitbox, _world.GetTileRectangle(point));
 
+                    if (PositionInTiles.Y > point.Y)
+                    {
+                        gravityPull = 0f;
+                        Move(0f, rect.Height);
+                        continue;
+                    }
                     if (PositionInTiles.X < point.X)
                     {
-                        position.X -= rect.Width;
+                        Move(-rect.Width, 0f);
+                        walkingInput = 0f; // temp
                     }
                     if (PositionInTiles.X > point.X)
                     {
-                        position.X += rect.Width;
-                    }        
-                    if(PositionInTiles.Y > point.Y)
-                    {
-                        gravityPull = 0f;
-                        position.Y += rect.Height;
-                    }
+                        Move(rect.Width, 0f);
+                        walkingInput = 0f; // temp
+                    }                   
                 }
         }       
 
         private void SetTileBelow() // get tile that is below the player
         {
             Point tileBelowCoord;
-            tileBelowCoord.X = (int)PositionInTiles.X;
-            tileBelowCoord.Y = (int)PositionInTiles.Y + 3;
+            tileBelowCoord.X = PositionInTiles.X;
+            tileBelowCoord.Y = PositionInTiles.Y + 3;
             tileBelow = _world.GetTile(tileBelowCoord);
         }
 
@@ -268,9 +277,11 @@ namespace Szczury
 
             if(FeetToGroundDistance < 0)
             {
-                position.Y += FeetToGroundDistance;
+                Move(0f, FeetToGroundDistance);
             }
-        }
+        }        
+
+       
 
         /// <summary>
         /// Distance between Feet position and next bottom tile (Warning: this doesn't include tileBelow)

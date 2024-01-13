@@ -9,8 +9,9 @@ namespace Szczury
 {
     public class GameObject
     {
-        public Vector2 position;
+        private Vector2 position;
         public Rectangle textureBox;
+        public Rectangle hitbox;
         protected Texture2D mainTexture;
 
         public GameObject(Vector2 startingPosition)
@@ -39,6 +40,36 @@ namespace Szczury
         public virtual void Update(GameTime gameTime)
         {
 
+        }
+
+        private void UpdateHitboxPosition()
+        {
+            if (hitbox == null) return;
+            hitbox.X = (int)MathF.Floor(Position.X);
+            hitbox.Y = (int)MathF.Floor(Position.Y);
+        }
+
+
+        public virtual void Move(float X, float Y)
+        {
+            position.X += X;
+            position.Y += Y;
+            UpdateHitboxPosition();
+        }
+
+        public virtual void SetPosition(float X, float Y)
+        {
+            position.X = X;
+            position.Y = Y;
+            UpdateHitboxPosition();
+        }
+
+        /// <summary>
+        /// Public property
+        /// </summary>
+        public Vector2 Position
+        {
+            get => position; 
         }
     }
 }

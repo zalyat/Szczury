@@ -12,8 +12,9 @@ namespace Szczury
             {
                 for(ushort x = 0; x < width; x++)
                 {
-                    if(y > width/4)//ground
+                    if(y > height/4)//ground
                     {
+                        if ((y > height * 0.35f && y < height / 2) && (x > width * 0.4f && x < width * 0.6f)) { chunk[x, y].blockType = BlocksRegistry.GetBlock("Air"); continue; }
                         chunk[x, y].blockType = BlocksRegistry.GetBlock("Dirt");
                         continue;
                     }
