@@ -8,8 +8,8 @@ namespace Szczury
 {
     public class TileWorld
     {
-        public const ushort width = 80;
-        public const ushort height = 45;
+        public const ushort width = 255;
+        public const ushort height = 65;
         public struct Tile
         {
             public Block blockType;
@@ -39,7 +39,7 @@ namespace Szczury
         public void Initialize()
         {
             WorldGenerator worldGenerator = new WorldGenerator();
-            world = worldGenerator.BasicGenerate(width, height);
+            world = worldGenerator.TestGenerate(width, height);
         }
 
         public Point WorldPositionToTilePosition(Vector2 position)

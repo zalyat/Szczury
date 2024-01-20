@@ -52,6 +52,7 @@ namespace Szczury.Core
             // TODO: Add your drawing code here
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
             GameState.currentState.Draw(_spriteBatch);
+            _spriteBatch.DrawString(TextureSet.debugFont, $"fps:{1 / gameTime.ElapsedGameTime.TotalSeconds}", new Vector2(1200, 0), Color.Gainsboro);
             _spriteBatch.End();
             base.Draw(gameTime);
         }
