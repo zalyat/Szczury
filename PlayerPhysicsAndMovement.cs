@@ -273,7 +273,6 @@ namespace Szczury
         {
             Move(0f, -Util.tileSize - 1f);
             walkingVelocity += 0.2f * dir;
-            Debug.WriteLine($"{dir}");
         }
 
         /// <summary>
