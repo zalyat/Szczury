@@ -14,6 +14,7 @@ namespace Szczury
         }
 
         public static int tileSize = 16;
+        public static ushort chunkSize = 32;
 
         public static Vector2 TilePosToWorldPos(Point location)
         {

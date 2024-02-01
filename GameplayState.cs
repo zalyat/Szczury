@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Szczury
@@ -14,14 +15,19 @@ namespace Szczury
 
         private PlayerGameObject player;
 
+        public GameplayState(SpriteBatch spriteBatch)
+        {
+            tileWorld.SetSpriteBatch(spriteBatch);
+        }
+
         public void Draw(SpriteBatch _spriteBatch)
         {
             //tiles
-            for (ushort y = 0; y < TileWorld.height; y++)
+            for (ushort x = 0; x < TileWorld.width; x += Util.chunkSize)
             {
-                for (ushort x = 0; x < TileWorld.width; x++)
+                for (ushort y = 0; y < TileWorld.height; y += Util.chunkSize)
                 {
-                    tileWorld.DrawTile(x, y, _spriteBatch);
+                    tileWorld.DrawChunk(tileWorld.GetChunkAtTilePosition(new Point(x, y)));
                 }
             }
 

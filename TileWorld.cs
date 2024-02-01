@@ -3,13 +3,25 @@ using Szczury.Blocks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace Szczury
 {
     public class TileWorld
     {
-        public const ushort width = 255;
-        public const ushort height = 65;
+        public const ushort width = 512;
+        public const ushort height = 64;
+
+        public struct Chunk
+        {
+            public bool isValid;
+
+            /// <summary> x axis </summary>
+            public short i;
+            /// <summary> y axis </summary>
+            public short j;
+        }
+
         public struct Tile
         {
             public Block blockType;
@@ -18,26 +30,15 @@ namespace Szczury
         }
 
         private Tile[,] world = new Tile[width, height];
-
-        public void DrawTile(ushort x, ushort y, SpriteBatch _spriteBatch)
+        private SpriteBatch _spriteBatch;
+        
+        public void SetSpriteBatch(SpriteBatch spriteBatch)
         {
-            Tile tile = world[x, y];
-            if(tile.blockType.GetType() == typeof(AirBlock))
-            {
-                return;
-            }
-            Color color = Color.White;
-            if (tile.debugHighlight == true) color = Color.Red;
-            _spriteBatch.Draw(tile.blockType.mainTexture,
-                new Rectangle(new Point(x * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.X), 
-                y * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.Y)),
-                new Point(Util.tileSize, Util.tileSize)),
-                color);
-            tile.debugHighlight = false;
+            _spriteBatch = spriteBatch;
         }
 
         public void Initialize()
-        {
+        {            
             WorldGenerator worldGenerator = new WorldGenerator();
             world = worldGenerator.TestGenerate(width, height);
         }
@@ -105,5 +106,57 @@ namespace Szczury
             if (isInWorldBoundaries(location) == false) return new Vector2(0, 0);
             return new Vector2(location.X * Util.tileSize, location.Y * Util.tileSize);
         }
+
+        private void DrawTile(ushort x, ushort y)
+        {
+            Tile tile = world[x, y];
+            if (tile.blockType.GetType() == typeof(AirBlock))
+            {
+                return;
+            }
+            Color color = Color.White;
+            if (tile.debugHighlight == true) color = Color.Red;
+            _spriteBatch.Draw(tile.blockType.mainTexture,
+                new Rectangle(new Point(x * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.X),
+                y * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.Y)),
+                new Point(Util.tileSize, Util.tileSize)),
+                color);
+            tile.debugHighlight = false;
+        }
+
+        ///
+        /// Chunks and stuff
+        /// Use i, j to name chunk coordinates
+        ///
+
+        public Chunk GetChunkAtTilePosition(Point location)
+        {
+            Chunk chunk = new Chunk();
+            if (isInWorldBoundaries(location) == false)
+            {
+                chunk.isValid = false;
+                return chunk;
+            }
+            else chunk.isValid = true;
+
+            chunk.i = (short)MathF.Ceiling(location.X/Util.chunkSize);
+            chunk.j = (short)MathF.Ceiling(location.Y/Util.chunkSize);
+            //Debug.WriteLine($"{location} {location} {chunk.i} {chunk.j} {chunk.isValid}");
+            return chunk;
+        }
+
+        public Rectangle GetChunkBoundaries(int i, int j) =>
+            new Rectangle(i * Util.chunkSize, j * Util.chunkSize, i * Util.chunkSize + Util.chunkSize, j * Util.chunkSize + Util.chunkSize);
+
+        public void DrawChunk(Chunk chunk)
+        {
+            if (chunk.isValid == false) return;
+            Rectangle rect = GetChunkBoundaries(chunk.i, chunk.j);
+
+            for (short x = chunk.i; x < rect.Width; x++)
+                for (short y = chunk.j; y < rect.Height; y++)
+                    DrawTile((ushort)x, (ushort)y);
+        }
+        
     }
 }

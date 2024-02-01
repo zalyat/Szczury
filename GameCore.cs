@@ -32,7 +32,7 @@ namespace Szczury.Core
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             TextureSet.Initialize(Content);
-            GameState.ChangeState(new GameplayState());
+            GameState.ChangeState(new GameplayState(_spriteBatch));
         }
 
         protected override void Update(GameTime gameTime)
