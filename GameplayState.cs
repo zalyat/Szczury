@@ -12,31 +12,44 @@ namespace Szczury
     {
         private List<GameObject> gameObjects = new List<GameObject>();
         public TileWorld tileWorld = new TileWorld();
+        private ChunkBuffering _chunkBuffering;
 
         private PlayerGameObject player;
+        private TileWorld.Chunk _lastPlayerChunk;
 
         public GameplayState(SpriteBatch spriteBatch)
         {
             tileWorld.SetSpriteBatch(spriteBatch);
+
+            _chunkBuffering = new ChunkBuffering(tileWorld);
         }
 
         public void Draw(SpriteBatch _spriteBatch)
         {
-            //tiles
-            for (ushort x = 0; x < TileWorld.width; x += Util.chunkSize)
-            {
-                for (ushort y = 0; y < TileWorld.height; y += Util.chunkSize)
-                {
-                    tileWorld.DrawChunk(tileWorld.GetChunkAtTilePosition(new Point(x, y)));
-                }
-            }
+            if (TileWorld.isDifferentChunk(tileWorld.GetChunkAtTilePosition(player.PositionInTiles), _lastPlayerChunk))
+                _chunkBuffering.UpdateChunkBuffer(player.PositionInTiles);
+
+            DrawWorld();
+            
 
             //game objects
             foreach (GameObject go in gameObjects)
             {
                 go.Draw(_spriteBatch);
             }
-            
+            //PerFrameCounter.Report();
+            //PerFrameCounter.Clear();
+            _lastPlayerChunk = tileWorld.GetChunkAtTilePosition(player.PositionInTiles);
+        }
+
+        private void DrawWorld()
+        {           
+            for (int i = 0; i < _chunkBuffering.chunkBuffer.GetLength(0); i++)
+                for (int j = 0; j < _chunkBuffering.chunkBuffer.GetLength(1); j++)
+                {
+                    //Debug.WriteLine($"Attempting to render {i} {j}");
+                    tileWorld.DrawChunk(_chunkBuffering.chunkBuffer[i, j]);
+                }
         }
 
         public void Initialize(ContentManager content)

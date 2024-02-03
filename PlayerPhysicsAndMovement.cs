@@ -44,6 +44,8 @@ namespace Szczury
             spriteBatch.DrawString(TextureSet.debugFont,
                 $"X:{Position.X}   Y:{Position.Y}      |      worldPos: X: {PositionInTiles.X}   Y: {PositionInTiles.Y}",
                 new Vector2(0, 0), Color.NavajoWhite);
+            TileWorld.Chunk c = _world.GetChunkAtTilePosition(PositionInTiles);
+            spriteBatch.DrawString(TextureSet.debugFont, $"chunkPos: i: {c.i} j: {c.j}", new Vector2(150, 20), Color.NavajoWhite);
             spriteBatch.DrawString(TextureSet.debugFont, $"isGrounded: {isGrounded()}", new Vector2(0, 20), Color.NavajoWhite);
 
             if (tileBelow != null)

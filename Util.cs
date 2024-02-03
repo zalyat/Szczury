@@ -13,8 +13,8 @@ namespace Szczury
             get => (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
-        public static int tileSize = 16;
-        public static ushort chunkSize = 32;
+        public const int tileSize = 16; //do not change (yet)
+        public const ushort chunkSize = 32;
 
         public static Vector2 TilePosToWorldPos(Point location)
         {

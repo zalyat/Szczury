@@ -4,13 +4,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using Microsoft.Win32;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Szczury
 {
     public class TileWorld
     {
-        public const ushort width = 512;
-        public const ushort height = 64;
+        public const ushort width = Util.chunkSize * 64;
+        public const ushort height = Util.chunkSize * 32;
 
         public struct Chunk
         {
@@ -26,7 +27,6 @@ namespace Szczury
         {
             public Block blockType;
             public float damage; //if damage is higher than hardness, the tile will break
-            public bool debugHighlight;
         }
 
         private Tile[,] world = new Tile[width, height];
@@ -83,12 +83,6 @@ namespace Szczury
             return true;
         }
 
-        public void SetDebugHighlight(Point location)
-        {
-            if (isInWorldBoundaries(location) == true)
-                world[location.X, location.Y].debugHighlight = !world[location.X, location.Y].debugHighlight;
-        }
-
         ///<summary>Used for colliders etc.</summary> <returns>Rectangle that is boundaries for a tile</returns>
         public Rectangle GetTileRectangle(Point location)
         {
@@ -109,19 +103,17 @@ namespace Szczury
 
         private void DrawTile(ushort x, ushort y)
         {
+            //PerFrameCounter.renderingActionsInFrame += 1;
             Tile tile = world[x, y];
             if (tile.blockType.GetType() == typeof(AirBlock))
             {
                 return;
-            }
-            Color color = Color.White;
-            if (tile.debugHighlight == true) color = Color.Red;
+            }            
             _spriteBatch.Draw(tile.blockType.mainTexture,
                 new Rectangle(new Point(x * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.X),
                 y * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.Y)),
                 new Point(Util.tileSize, Util.tileSize)),
-                color);
-            tile.debugHighlight = false;
+                Color.White);
         }
 
         ///
@@ -132,6 +124,7 @@ namespace Szczury
         public Chunk GetChunkAtTilePosition(Point location)
         {
             Chunk chunk = new Chunk();
+            //Debug.WriteLine($"{location.X / Util.chunkSize} {location.Y / Util.chunkSize}");
             if (isInWorldBoundaries(location) == false)
             {
                 chunk.isValid = false;
@@ -141,7 +134,7 @@ namespace Szczury
 
             chunk.i = (short)MathF.Ceiling(location.X/Util.chunkSize);
             chunk.j = (short)MathF.Ceiling(location.Y/Util.chunkSize);
-            //Debug.WriteLine($"{location} {location} {chunk.i} {chunk.j} {chunk.isValid}");
+            
             return chunk;
         }
 
@@ -151,11 +144,20 @@ namespace Szczury
         public void DrawChunk(Chunk chunk)
         {
             if (chunk.isValid == false) return;
-            Rectangle rect = GetChunkBoundaries(chunk.i, chunk.j);
 
-            for (short x = chunk.i; x < rect.Width; x++)
-                for (short y = chunk.j; y < rect.Height; y++)
+            Rectangle rect = GetChunkBoundaries(chunk.i, chunk.j);
+            //Debug.WriteLine($"Rendering chunk {chunk.i} {chunk.j} | {rect.X} {rect.Y} {rect.Width} {rect.Height} | {test}");
+            for (short x = (short)rect.X; x < rect.Width; x++)
+                for (short y = (short)rect.Y; y < rect.Height; y++)
+                {
                     DrawTile((ushort)x, (ushort)y);
+                }
+        }
+
+        public static bool isDifferentChunk(Chunk a, Chunk b)
+        {
+            if (a.i != b.i || a.j != b.j) return true;
+            return false;
         }
         
     }
