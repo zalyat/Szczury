@@ -27,7 +27,7 @@ namespace Szczury
         {
             base.Start();
 
-            SetPosition(TileWorld.width / 2 * Util.tileSize, 288);
+            SetPosition(TileWorld.width / 2 * Util.tileSize, 70 * Util.tileSize);
 
             GameplayState gs = GameState.currentState as GameplayState;
             _world = gs.tileWorld;

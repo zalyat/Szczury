@@ -26,6 +26,11 @@ namespace Szczury
 
         public struct Tile
         {
+            public Tile(Block b)
+            {
+                blockType = b;
+                damage = -1f;
+            }
             public Block blockType;
             public float damage; //if damage is higher than hardness, the tile will break
         }
@@ -58,13 +63,13 @@ namespace Szczury
             world[location.X, location.Y].blockType = block;
         }
 
-        public Tile? GetTile(Point location)
+        public Tile GetTile(Point location)
         {
             //Debug.WriteLine($"Getting tile: {location.X}, {location.Y} | isInWorldBoundaries?: {isInWorldBoundaries(location)}");
             if (isInWorldBoundaries(location) == false)
             {
                 Debug.WriteLine(">>>>>>>>>>Tile not in boundaries! " + location.X + " " + location.Y);
-                return null;
+                return new Tile(BlocksRegistry.GetBlock("Border"));
             }
             return world[location.X, location.Y];
         }

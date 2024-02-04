@@ -21,6 +21,7 @@ namespace Szczury
 
             Add("default", "default");
             Add("dirt_block", "tile_dirt");
+            Add("basalt_block", "basalt_block");
 
         }
 

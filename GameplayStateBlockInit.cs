@@ -8,6 +8,8 @@ namespace Szczury
         {
             BlocksRegistry.AddBlock(new DirtBlock(), "dirt_block");
             BlocksRegistry.AddBlock(new AirBlock());
-        }
+            BlocksRegistry.AddBlock(new BorderBlock());
+            BlocksRegistry.AddBlock(new BasaltBlock(), "basalt_block");
+;        }
     }
 }
