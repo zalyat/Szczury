@@ -48,6 +48,7 @@ namespace Szczury
             catch (Exception e)
             {
                 Debug.WriteLine(e);
+                output = GetTexture("default"); //return error texture
             }
             return output;
         }
