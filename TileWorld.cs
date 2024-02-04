@@ -3,8 +3,9 @@ using Szczury.Blocks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
-using Microsoft.Win32;
-using static System.Net.Mime.MediaTypeNames;
+using System.IO;
+using System.Runtime.CompilerServices;
+
 
 namespace Szczury
 {
@@ -39,8 +40,8 @@ namespace Szczury
 
         public void Initialize()
         {            
-            WorldGenerator worldGenerator = new WorldGenerator();
-            world = worldGenerator.TestGenerate(width, height);
+            WorldGenerator worldGenerator = new ClassicWorldGenerator();
+            world = worldGenerator.Generate(width, height);
         }
 
         public Point WorldPositionToTilePosition(Vector2 position)
@@ -160,5 +161,33 @@ namespace Szczury
             return false;
         }
         
+
+        ///
+        ///Dumb stuff
+        ///
+        ///
+
+        public void SaveAs(string path, string name, GraphicsDevice graphicsDevice)
+        {
+            Texture2D map = new Texture2D(graphicsDevice, width, height);
+
+            Color[] colBuff = new Color[width * height];
+            for(int y = 0; y < height; y++)
+            {
+                for(int x = 0; x < width; x++)
+                {
+                    Block block = world[x, y].blockType;
+                    colBuff[y * width + x] = block.ColorRepresentation;
+                }
+            }
+
+            
+            map.SetData(colBuff);
+
+            Stream str = File.OpenWrite(path + name);
+            map.SaveAsPng(str, width, height);
+            str.Dispose();
+            map.Dispose();
+        }
     }
 }

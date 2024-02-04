@@ -17,11 +17,14 @@ namespace Szczury
         private PlayerGameObject player;
         private TileWorld.Chunk _lastPlayerChunk;
 
-        public GameplayState(SpriteBatch spriteBatch)
+        private GraphicsDevice _graphicsDevice;
+
+        public GameplayState(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
             tileWorld.SetSpriteBatch(spriteBatch);
 
             _chunkBuffering = new ChunkBuffering(tileWorld);
+            _graphicsDevice = graphicsDevice;
         }
 
         public void Draw(SpriteBatch _spriteBatch)
@@ -57,6 +60,7 @@ namespace Szczury
             InitializeBlocks();
 
             tileWorld.Initialize();
+            tileWorld.SaveAs("maps/", "scr" + System.DateTime.Now.Ticks+".png", _graphicsDevice);
         }
 
         public void Start()
