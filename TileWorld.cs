@@ -45,7 +45,7 @@ namespace Szczury
 
         public void Initialize()
         {            
-            WorldGenerator worldGenerator = new ClassicWorldGenerator();
+            WorldGenerator worldGenerator = new FlatWorldGenerator();
             world = worldGenerator.Generate(width, height);
         }
 
