@@ -16,6 +16,7 @@ namespace Szczury
 
         private int Margin => 6;
         private Color slotColor => Color.PeachPuff;
+        private Color toolbarColor => Color.Orange;
 
         public ItemContainer inventoryContainer = new ItemContainer("Player's container", 12);
 
@@ -46,7 +47,7 @@ namespace Szczury
             for (int i = 0; i < toolbarLength; i++)
             {
                 int x = i * slotSize + Margin + (slotMargin * i);
-                inventoryContainer.DrawSlot(slotColor, new Point(x, Margin), slotSize, i, spriteBatch);
+                inventoryContainer.DrawSlot(toolbarColor, new Point(x, Margin), slotSize, i, spriteBatch);
             }
         }
 
