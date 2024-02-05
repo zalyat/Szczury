@@ -32,6 +32,7 @@ namespace Szczury.Core
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             TextureSet.Initialize(Content);
+            UIStyle.Initialize();
             GameState.ChangeState(new GameplayState(_spriteBatch, GraphicsDevice));
         }
 

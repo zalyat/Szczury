@@ -10,7 +10,7 @@ namespace Szczury
 {
     public partial class PlayerGameObject : GameObject
     {
-        public float gravity = -800f;
+        public float gravity = -500f;
         private float gravityPull = 0f;
         private float gravityPullTime = 0.6f;
         public float baseWalkingSpeed = 50f;
@@ -121,7 +121,7 @@ namespace Szczury
             }
         }
 
-        public void PlayerInput() //player input that will influence movement and position
+        public void PlayerMovementInput() //player input that will influence movement and position
         {
             KeyboardState state = Keyboard.GetState();         
 
@@ -331,12 +331,6 @@ namespace Szczury
         /// Tile variant
         /// </summary>
         /// <returns></returns>
-        private bool tileAirCheck(Point location) => _world.isAir(location);
-
-        private void KeyPressCheck()
-        {
-            KeyboardState state = Keyboard.GetState();
-            flyingCheatKeyPressedLastFrame = state.IsKeyDown(Keys.F1);
-        }
+        private bool tileAirCheck(Point location) => _world.isAir(location);        
     }
 }

@@ -4,11 +4,16 @@ using System.Text;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SharpDX.XInput;
+using Microsoft.Xna.Framework.Input;
 
 namespace Szczury
 {
     public partial class PlayerGameObject : GameObject
     {
+        private const bool debugMovement = false;
+        private bool inventoryKeyPressedLastFrame = false;
+
         public PlayerGameObject(Vector2 startingPosition) : base(startingPosition)
         {
             textureBox = new Rectangle(new Point(0, 0), new Point(16, 48));
@@ -19,8 +24,14 @@ namespace Szczury
         {
             base.Draw(spriteBatch);
 
-            DebugInfoDraw(spriteBatch);
+            if(showInventory == true)
+                DrawInventory(spriteBatch);
+            if (showInventory == false)
+                DrawToolbar(spriteBatch);
 
+#if (debugMovement == true)
+            DebugInfoDraw(spriteBatch);
+#endif
         }
 
         public override void Start()
@@ -36,9 +47,26 @@ namespace Szczury
         public override void Update(GameTime gameTime)
         {
             Physics();
+            PlayerMovementInput();
             PlayerInput();
             KeyPressCheck();
             SetTileBelow();
+        }
+
+        public void PlayerInput()
+        {
+            KeyboardState state = Keyboard.GetState();
+            if (state.IsKeyDown(Keys.E) && inventoryKeyPressedLastFrame == false)
+            {
+                showInventory = !showInventory;
+            }
+        }
+
+        private void KeyPressCheck()
+        {
+            KeyboardState state = Keyboard.GetState();
+            flyingCheatKeyPressedLastFrame = state.IsKeyDown(Keys.F1);
+            inventoryKeyPressedLastFrame = state.IsKeyDown(Keys.E);
         }
     }
 }

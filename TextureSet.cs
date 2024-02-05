@@ -23,6 +23,8 @@ namespace Szczury
             Add("dirt_block", "tile_dirt");
             Add("basalt_block", "basalt_block");
 
+            Add("containerSlot1", "containerSlot1");
+
         }
 
         private static void Add(string name, string pipepath)
