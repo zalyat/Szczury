@@ -158,7 +158,7 @@ namespace Szczury
 
         public Point PositionInTiles
         {
-            get => _world.WorldPositionToTilePosition(new Vector2(Position.X + 8, Position.Y - 8));
+            get => TileWorld.WorldPositionToTilePosition(new Vector2(Position.X + 8, Position.Y - 8));
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace Szczury
 
         public Point FeetPositionInTiles //change it to tiles
         {
-            get => _world.WorldPositionToTilePosition(FeetPosition);
+            get => TileWorld.WorldPositionToTilePosition(FeetPosition);
         }
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace Szczury
         /// A faster way for doing _world.isAir(_...) for world position
         /// </summary>
         /// <returns>boolean = is tile in this world pos Air?</returns>
-        private bool tileAirCheck(Vector2 atPosition) => _world.isAir(_world.WorldPositionToTilePosition(atPosition));
+        private bool tileAirCheck(Vector2 atPosition) => _world.isAir(TileWorld.WorldPositionToTilePosition(atPosition));
         /// <summary>
         /// A faster way for doing _world.isAir(_...) for world position
         /// </summary>

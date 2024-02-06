@@ -25,6 +25,10 @@ namespace Szczury
 
             Add("containerSlot1", "containerSlot1");
 
+            Add("item_mining_stick", "mining_stick_item");
+            Add("mining_stick_object", "mining_stick_object");
+            Add("toolbarMarker", "toolbarMarker");
+
         }
 
         private static void Add(string name, string pipepath)

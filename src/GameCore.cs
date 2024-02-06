@@ -23,8 +23,8 @@ namespace Szczury.Core
             base.Initialize();
 
             _graphics.IsFullScreen = false;
-            _graphics.PreferredBackBufferWidth = /*640*/ 1280;
-            _graphics.PreferredBackBufferHeight = /*480*/ 720;
+            _graphics.PreferredBackBufferWidth = /*640*/ Util.screenWidth;
+            _graphics.PreferredBackBufferHeight = /*480*/ Util.screenHeight;
             _graphics.ApplyChanges();
         }
 

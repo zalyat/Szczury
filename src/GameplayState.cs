@@ -58,6 +58,7 @@ namespace Szczury
         public void Initialize(ContentManager content)
         {
             InitializeBlocks();
+            InitializeItems();
 
             tileWorld.Initialize();
             tileWorld.SaveAs("maps/", "scr" + System.DateTime.Now.Ticks+".png", _graphicsDevice);
@@ -65,7 +66,7 @@ namespace Szczury
 
         public void Start()
         {
-            player = CreateGameObject(new PlayerGameObject(new Vector2(5f, 10f))) as PlayerGameObject;
+            player = CreateGameObject(new PlayerGameObject(new Vector2(5f, 10f), tileWorld)) as PlayerGameObject;
         }
 
         public void Update(GameTime gameTime)

@@ -13,10 +13,12 @@ namespace Szczury
         public Rectangle textureBox;
         public Rectangle hitbox;
         protected Texture2D mainTexture;
+        public TileWorld currentWorld;
 
-        public GameObject(Vector2 startingPosition)
+        public GameObject(Vector2 startingPosition, TileWorld world)
         {
             position = startingPosition;
+            currentWorld = world;
             Start();
         }
 

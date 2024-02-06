@@ -7,6 +7,9 @@ namespace Szczury
 {
     public static class Util
     {
+        public const int screenWidth = 1280;
+        public const int screenHeight = 720;
+
         public static GameTime gameTime;
         public static float deltaTime
         {

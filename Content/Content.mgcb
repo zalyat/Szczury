@@ -56,6 +56,28 @@
 /processorParam:TextureFormat=Compressed
 /build:File.spritefont;debugFont.spritefont
 
+#begin mining_stick_item.png
+/importer:TextureImporter
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:mining_stick_item.png
+
+#begin mining_stick_object.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:mining_stick_object.png
+
 #begin tile_dirt.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -67,4 +89,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tile_dirt.png
+
+#begin toolbarMarker.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:toolbarMarker.png
 

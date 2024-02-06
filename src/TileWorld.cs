@@ -45,11 +45,11 @@ namespace Szczury
 
         public void Initialize()
         {            
-            WorldGenerator worldGenerator = new FlatWorldGenerator();
+            WorldGenerator worldGenerator = new ClassicWorldGenerator();
             world = worldGenerator.Generate(width, height);
         }
 
-        public Point WorldPositionToTilePosition(Vector2 position)
+        public static Point WorldPositionToTilePosition(Vector2 position)
         {
             int tileSize = Util.tileSize;
             return new Point((int)MathF.Ceiling(position.X/tileSize)-1, (int)MathF.Ceiling(position.Y/tileSize));
@@ -72,6 +72,16 @@ namespace Szczury
                 return new Tile(BlocksRegistry.GetBlock("Border"));
             }
             return world[location.X, location.Y];
+        }
+
+        public void SetTile(Point location, Block block)
+        {
+            if (isInWorldBoundaries(location) == false)
+            {
+                Debug.WriteLine("!!!!!!!!!!Tile not in boundaries! " + location.X + " " + location.Y);
+                return;
+            }
+            world[location.X, location.Y].blockType = block;
         }
 
         public bool isAir(Point location)

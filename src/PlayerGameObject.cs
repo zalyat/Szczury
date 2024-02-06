@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SharpDX.XInput;
 using Microsoft.Xna.Framework.Input;
+using Szczury.Items;
 
 namespace Szczury
 {
@@ -13,25 +14,38 @@ namespace Szczury
     {
         private const bool debugMovement = false;
         private bool inventoryKeyPressedLastFrame = false;
+        private bool leftMouseButtonPressedLastFrame = false;
+        private int lastMouseScroll;
 
-        public PlayerGameObject(Vector2 startingPosition) : base(startingPosition)
+        private float itemChangeDelayTimer = 0.0f;
+        private float itemChangeMinimumDelay = 0.1f;
+
+        private float itemUseDelayTimer = 0f;
+
+
+        public PlayerGameObject(Vector2 startingPosition, TileWorld world) : base(startingPosition, world)
         {
             textureBox = new Rectangle(new Point(0, 0), new Point(16, 48));
             hitbox = new Rectangle(new Point(0, 0), new Point(16, 48));
+            markerTexture = TextureSet.GetTexture("toolbarMarker");
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
 
-            if(showInventory == true)
+            DrawToolbarMarker(spriteBatch);
+
+            if (showInventory == true)
                 DrawInventory(spriteBatch);
             if (showInventory == false)
                 DrawToolbar(spriteBatch);
 
-#if (debugMovement == true)
-            DebugInfoDraw(spriteBatch);
-#endif
+            
+
+            #if (debugMovement == true)
+                        DebugInfoDraw(spriteBatch);
+            #endif
         }
 
         public override void Start()
@@ -39,6 +53,7 @@ namespace Szczury
             base.Start();
 
             SetPosition(TileWorld.width / 2 * Util.tileSize, 70 * Util.tileSize);
+            inventoryContainer.AddItemStack(new Item.Stack(ItemsRegistry.GetItem("Mining Stick"), 2), 0, true);
 
             GameplayState gs = GameState.currentState as GameplayState;
             _world = gs.tileWorld;
@@ -48,25 +63,27 @@ namespace Szczury
         {
             Physics();
             PlayerMovementInput();
+            DoTimers();
             PlayerInput();
             KeyPressCheck();
             SetTileBelow();
+        }            
+
+        /// <summary>
+        /// Update every timer
+        /// </summary>
+        private void DoTimers()
+        {
+            itemUseDelayTimer = Math.Clamp(itemUseDelayTimer + Util.deltaTime, 0, 100f);
+            itemChangeDelayTimer = Math.Clamp(itemChangeDelayTimer + Util.deltaTime, 0, itemChangeMinimumDelay * 2);
         }
 
-        public void PlayerInput()
+        /// <summary>
+        /// Use this after an item was used
+        /// </summary>
+        public void ResetItemUseDelay()
         {
-            KeyboardState state = Keyboard.GetState();
-            if (state.IsKeyDown(Keys.E) && inventoryKeyPressedLastFrame == false)
-            {
-                showInventory = !showInventory;
-            }
-        }
-
-        private void KeyPressCheck()
-        {
-            KeyboardState state = Keyboard.GetState();
-            flyingCheatKeyPressedLastFrame = state.IsKeyDown(Keys.F1);
-            inventoryKeyPressedLastFrame = state.IsKeyDown(Keys.E);
+            itemUseDelayTimer = 0f;
         }
     }
 }
