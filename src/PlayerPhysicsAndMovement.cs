@@ -306,7 +306,6 @@ namespace Szczury
 
             if (FeetToGroundDistance < 0)
             {
-                Debug.WriteLine("Our world");
                 Move(0f, MathF.Ceiling(FeetToGroundDistance));
             }
         }

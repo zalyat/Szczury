@@ -32,9 +32,8 @@ namespace Szczury
             textureBox.X = (int)Math.Floor(position.X);
             textureBox.Y = (int)Math.Floor(position.Y);
             spriteBatch.Draw(mainTexture, new Rectangle(
-                new Point(textureBox.X - (int)MathF.Ceiling(Camera.cameraPosition.X),
-                          textureBox.Y - (int)MathF.Ceiling(Camera.cameraPosition.Y)
-                ), new Point(textureBox.Width, textureBox.Height)), Color.Magenta);
+                Camera.OnScreen(new Point(textureBox.X, textureBox.Y)),
+                new Point(textureBox.Width, textureBox.Height)), Color.Magenta);
 
             //Debug.WriteLine($"{textureBox.X + (int)MathF.Ceiling(Camera.cameraPosition.X)}   |   {textureBox.Y + (int)MathF.Ceiling(Camera.cameraPosition.Y)}");
         }
