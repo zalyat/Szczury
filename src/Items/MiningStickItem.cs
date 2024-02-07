@@ -32,7 +32,6 @@ namespace Szczury.Items
             if (tile.blockType.Name != "Air" && tile.blockType.Name != "Border")
             {
                 player.currentWorld.SetTile(tileLocation, Blocks.BlocksRegistry.GetBlock("Air"));
-                Debug.WriteLine($"{tileLocation.X} {tileLocation.Y}");
             }
         }
     }

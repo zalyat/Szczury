@@ -16,6 +16,7 @@ namespace Szczury
         public void InitializeItems()
         {
             ItemsRegistry.AddItem(new MiningStickItem(), "item_mining_stick");
+            ItemsRegistry.AddItem(new MagicStickItem(), "item_mining_stick");
         }
     }
 }
