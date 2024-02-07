@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -37,7 +38,7 @@ namespace Szczury
         {
             get => baseWalkingSpeed;
         }
-      
+        
 
         public void DebugInfoDraw(SpriteBatch spriteBatch)
         {
@@ -158,7 +159,7 @@ namespace Szczury
 
         public Point PositionInTiles
         {
-            get => TileWorld.WorldPositionToTilePosition(new Vector2(Position.X + 8, Position.Y - 8));
+            get => TileWorld.WorldPositionToTilePosition(new Vector2(Position.X + 8, Position.Y + 8));
         }
 
         /// <summary>
@@ -174,7 +175,7 @@ namespace Szczury
         /// </summary>
         public Vector2 BottomPosition
         {
-            get => new Vector2(Position.X + 8, Position.Y + 40);
+            get => new Vector2(Position.X + 8, Position.Y + 48);
         }
 
         public Point FeetPositionInTiles //change it to tiles
@@ -209,9 +210,9 @@ namespace Szczury
                 return false;
 
             //if (tileBelow == null || tileBelow.Value.blockType == BlocksRegistry.GetBlock("Air")) return false;
-            if ((tileAirCheck(Position.X + 1, BottomPosition.Y) == false
-                || tileAirCheck(Position.X + 8, BottomPosition.Y) == false
-                || tileAirCheck(Position.X + 15, BottomPosition.Y) == false) //leave 1 pixel margin to prevent sticking to walls
+            if ((tileAirCheck(Position.X + 1, BottomPosition.Y+1) == false
+                || tileAirCheck(Position.X + 8, BottomPosition.Y+1) == false
+                || tileAirCheck(Position.X + 15, BottomPosition.Y+1) == false) //leave 1 pixel margin to prevent sticking to walls
                 && (FeetToGroundDistance < 0.1f || FeetToGroundDistance < 0))
                 return true;
 
@@ -305,7 +306,8 @@ namespace Szczury
 
             if (FeetToGroundDistance < 0)
             {
-                Move(0f, FeetToGroundDistance);
+                Debug.WriteLine("Our world");
+                Move(0f, MathF.Ceiling(FeetToGroundDistance));
             }
         }
 

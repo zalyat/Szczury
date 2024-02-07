@@ -52,7 +52,7 @@ namespace Szczury
         public static Point WorldPositionToTilePosition(Vector2 position)
         {
             int tileSize = Util.tileSize;
-            return new Point((int)MathF.Ceiling(position.X/tileSize)-1, (int)MathF.Ceiling(position.Y/tileSize));
+            return new Point((int)MathF.Ceiling(position.X/tileSize)-1, (int)MathF.Ceiling(position.Y/tileSize)-1);
         }
 
         public void ChangeTile(Point location, Block block)
@@ -126,8 +126,7 @@ namespace Szczury
                 return;
             }            
             _spriteBatch.Draw(tile.blockType.mainTexture,
-                new Rectangle(new Point(x * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.X),
-                y * Util.tileSize - (int)MathF.Ceiling(Camera.cameraPosition.Y)),
+                new Rectangle(Camera.OnScreen(new Point(x * Util.tileSize, y * Util.tileSize)),
                 new Point(Util.tileSize, Util.tileSize)),
                 Color.White);
         }

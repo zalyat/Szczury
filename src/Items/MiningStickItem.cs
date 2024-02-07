@@ -29,9 +29,10 @@ namespace Szczury.Items
         {
             Point tileLocation = player.CursorPositionToTilePosition();
             TileWorld.Tile tile = player.currentWorld.GetTile(tileLocation);
-            if(tile.blockType.Name != "Air" && tile.blockType.Name != "Border")
+            if (tile.blockType.Name != "Air" && tile.blockType.Name != "Border")
             {
                 player.currentWorld.SetTile(tileLocation, Blocks.BlocksRegistry.GetBlock("Air"));
+                Debug.WriteLine($"{tileLocation.X} {tileLocation.Y}");
             }
         }
     }

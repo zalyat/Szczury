@@ -41,11 +41,11 @@ namespace Szczury
             if (showInventory == false)
                 DrawToolbar(spriteBatch);
 
-            
+            //spriteBatch.Draw(TextureSet.GetTexture("Ay"), new Rectangle(Camera.OnScreen(new Point((int)MathF.Floor(Center.X), 
+              //  (int)MathF.Floor(Center.Y))), new Point(16)), Color.Aqua);
 
-            #if (debugMovement == true)
-                        DebugInfoDraw(spriteBatch);
-            #endif
+            if(debugMovement == true)
+                DebugInfoDraw(spriteBatch);
         }
 
         public override void Start()

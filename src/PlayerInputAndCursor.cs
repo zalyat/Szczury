@@ -61,7 +61,7 @@ namespace Szczury
         public Point CursorPositionToTilePosition()
         {
             Point point = TileWorld.WorldPositionToTilePosition(CursorPositionToWorldPosition());
-            return new Point(point.X, point.Y - 1);
+            return new Point(point.X, point.Y);
         }
     }
 }
