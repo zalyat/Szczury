@@ -10,7 +10,17 @@ namespace Szczury
 {
     public partial class GameplayState : IState
     {
+        private bool debugMode = true;
+
+        private static GameplayState _mainSingleton;
+        public static GameplayState Main
+        {
+            get => _mainSingleton;
+        }
+
         private List<GameObject> gameObjects = new List<GameObject>();
+        private List<GameObject> gameObjectsToDelete = new List<GameObject>();
+        private List<GameObject> gameObjectsToCreate = new List<GameObject>();
         public TileWorld tileWorld = new TileWorld();
         private ChunkBuffering _chunkBuffering;
 
@@ -21,6 +31,8 @@ namespace Szczury
 
         public GameplayState(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
+            if (_mainSingleton == null) _mainSingleton = this;
+
             tileWorld.SetSpriteBatch(spriteBatch);
 
             _chunkBuffering = new ChunkBuffering(tileWorld);
@@ -32,17 +44,25 @@ namespace Szczury
             if (TileWorld.isDifferentChunk(tileWorld.GetChunkAtTilePosition(player.PositionInTiles), _lastPlayerChunk))
                 _chunkBuffering.UpdateChunkBuffer(player.PositionInTiles);
 
-            DrawWorld();
-            
+            DrawWorld();           
 
             //game objects
             foreach (GameObject go in gameObjects)
             {
                 go.Draw(_spriteBatch);
             }
+
+            if(debugMode == true)
+                DrawDebug(_spriteBatch);
+
             //PerFrameCounter.Report();
             //PerFrameCounter.Clear();
             _lastPlayerChunk = tileWorld.GetChunkAtTilePosition(player.PositionInTiles);
+        }
+
+        private void DrawDebug(SpriteBatch _spriteBatch)
+        {
+            _spriteBatch.DrawString(TextureSet.debugFont, $"{gameObjects.Count}", new Vector2(Util.screenHeight / 2, Util.screenWidth / 2), Color.Wheat);
         }
 
         private void DrawWorld()
@@ -77,12 +97,38 @@ namespace Szczury
             }
 
             Camera.CenterCameraOn(player.Center);
+
+            DeleteObjects();
+            CreateObjects();
         }
 
         public GameObject CreateGameObject(GameObject gameObject)
         {
-            gameObjects.Add(gameObject);
+            gameObjectsToCreate.Add(gameObject);
             return gameObject;
+        }
+
+        public void DeleteGameObject(GameObject gameObject)
+        {
+            gameObjectsToDelete.Add(gameObject);
+        }
+
+        private void CreateObjects()
+        {
+            foreach(GameObject go in gameObjectsToCreate)
+            {
+                gameObjects.Add(go);
+            }
+            gameObjectsToCreate.Clear();
+        }
+
+        private void DeleteObjects()
+        {
+            foreach(GameObject go in gameObjectsToDelete)
+            {
+                gameObjects.Remove(go);
+            }
+            gameObjectsToDelete.Clear();
         }
     }
 }

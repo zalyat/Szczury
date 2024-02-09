@@ -23,5 +23,32 @@ namespace Szczury
         {
             return new Vector2(location.X * tileSize, location.Y * tileSize);
         }
+
+        /// <summary>
+        /// Turn Vector2 into a Point
+        /// </summary>
+        /// <returns>Ceiling x and y of a vector</returns>
+        public static Point ToPoint(this Vector2 vector)
+        {
+            return new Point((int)MathF.Ceiling(vector.X), (int)MathF.Ceiling(vector.Y));
+        }
+
+        /// <summary>
+        /// Turn Vector2 into a Point with offset
+        /// </summary>
+        /// <returns>Ceiling x and y of a vector</returns>
+        public static Point ToPoint(this Vector2 vector, int x, int y)
+        {
+            return new Point((int)MathF.Ceiling(vector.X) + x, (int)MathF.Ceiling(vector.Y) + y);
+        }
+
+        /// <summary>
+        /// Turn Vector2 with offset into a Point
+        /// </summary>
+        /// <returns></returns>
+        public static Point ToPoint(this Vector2 vector, Vector2 offset)
+        {
+            return new Point((int)MathF.Ceiling(vector.X + offset.X), (int)MathF.Ceiling(vector.Y + offset.Y));
+        }
     }
 }

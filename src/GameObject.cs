@@ -51,10 +51,25 @@ namespace Szczury
         }
 
 
+        public virtual void Move(Vector2 vector)
+        {
+            position.X += vector.X;
+            position.Y += vector.Y;
+            UpdateHitboxPosition();
+        }
+
         public virtual void Move(float X, float Y)
         {
             position.X += X;
             position.Y += Y;
+            UpdateHitboxPosition();
+        }
+
+
+        public virtual void SetPosition(Vector2 vector)
+        {
+            position.X = vector.X;
+            position.Y = vector.Y;
             UpdateHitboxPosition();
         }
 

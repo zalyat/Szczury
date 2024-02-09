@@ -13,13 +13,15 @@ namespace Szczury.Items
     {
         public override string Name => "Mining Stick";
         public override float UseDelay => 0.5f;
+        public virtual float Range => 4 * Util.tileSize;
+        protected Texture2D objectTexture;
 
         public override void OnUse(bool singleTime, float lastUse, PlayerGameObject player)
         {
             base.OnUse(singleTime, lastUse, player);
 
             if (lastUse > UseDelay)
-            {
+            {         
                 Mine(player);
                 player.ResetItemUseDelay();
             }
@@ -27,6 +29,9 @@ namespace Szczury.Items
 
         private void Mine(PlayerGameObject player)
         {
+            if (Vector2.Distance(player.Center, player.CursorPositionToWorldPosition()) > Range) return;
+
+            GameplayState.Main.CreateGameObject(new MiningStickObject(player.Position, player.CursorPositionToWorldPosition(), player.currentWorld, UseDelay));
             Point tileLocation = player.CursorPositionToTilePosition();
             TileWorld.Tile tile = player.currentWorld.GetTile(tileLocation);
             if (tile.blockType.Name != "Air" && tile.blockType.Name != "Border")

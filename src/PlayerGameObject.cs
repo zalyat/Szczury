@@ -53,10 +53,13 @@ namespace Szczury
             base.Start();
 
             SetPosition(TileWorld.width / 2 * Util.tileSize, 70 * Util.tileSize);
-            inventoryContainer.AddItemStack(new Item.Stack(ItemsRegistry.GetItem("Magic Stick"), 2), 0, true);
+            inventoryContainer.AddItemStack(new Item.Stack(ItemsRegistry.GetItem("Mining Stick"), 2), 0, true);
 
             GameplayState gs = GameState.currentState as GameplayState;
             _world = gs.tileWorld;
+
+            itemChangeDelayTimer = 10f; //vv
+            itemUseDelayTimer = 10f; //let the player to use items as soon as the game starts
         }
 
         public override void Update(GameTime gameTime)
