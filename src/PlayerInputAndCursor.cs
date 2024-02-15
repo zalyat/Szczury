@@ -51,6 +51,11 @@ namespace Szczury
         private Point _cursorPosition;
         public Point CursorPosition => new Point(Math.Clamp(_cursorPosition.X, 0, Util.screenWidth), Math.Clamp(_cursorPosition.Y, 0, Util.screenHeight));
 
+        public Point CursorPositionOnScreen()
+        {
+            return _cursorPosition;
+        }
+        
         public Vector2 CursorPositionToWorldPosition()
         {
             float x = Camera.cameraPosition.X + _cursorPosition.X;
