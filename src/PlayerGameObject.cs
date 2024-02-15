@@ -39,7 +39,10 @@ namespace Szczury
             if (showInventory == true)
                 DrawInventory(spriteBatch);
             if (showInventory == false)
+            {
+                inventoryUIRects = null;
                 DrawToolbar(spriteBatch);
+            }
 
             //spriteBatch.Draw(TextureSet.GetTexture("Ay"), new Rectangle(Camera.OnScreen(new Point((int)MathF.Floor(Center.X), 
               //  (int)MathF.Floor(Center.Y))), new Point(16)), Color.Aqua);

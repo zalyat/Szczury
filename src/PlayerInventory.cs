@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Szczury.Items;
@@ -23,25 +21,45 @@ namespace Szczury
         private Color toolbarColor => Color.Orange;
 
         public ItemContainer inventoryContainer = new ItemContainer("Player's inventory", 12);
+        private Rectangle[] inventoryUIRects;
 
         public int toolbarLength = 4;
         private int currentToolbarIndex = 0;
 
-        public void DrawInventory(SpriteBatch spriteBatch)
+
+        public void CalculateInventoryUI()
         {
             int invSize = inventoryContainer.slots.Length;
             int row = toolbarLength * UIStyle.containerSlotSize;
             int slotSize = UIStyle.containerSlotSize;
             int slotMargin = UIStyle.conatinerSlotMargin;
-                
-            for(int i = 0; i < invSize; i++)
+            Rectangle[] uiBuffer = new Rectangle[invSize];
+
+            for (int i = 0; i < invSize; i++)
             {
                 int collumn = (int)MathF.Floor(i / toolbarLength);
                 int xInCollumn = i % toolbarLength;
-                int x =  i * slotSize + Margin + (slotMargin * xInCollumn) - (collumn * row);
+                int x = i * slotSize + Margin + (slotMargin * xInCollumn) - (collumn * row);
                 int y = collumn * slotSize + Margin + (slotMargin * collumn);
 
-                inventoryContainer.DrawSlot(slotColor, new Point(x, y), UIStyle.containerSlotSize, i, spriteBatch);
+                uiBuffer[i] = new Rectangle(x, y, UIStyle.containerSlotSize, UIStyle.containerSlotSize);
+            }
+
+            ItemContainerUIStorage.AddEntry(inventoryContainer.name, uiBuffer);
+            inventoryUIRects = uiBuffer;
+        }
+
+        public void DrawInventory(SpriteBatch spriteBatch)
+        {
+            if(inventoryUIRects == null)
+            {
+                CalculateInventoryUI();
+            }
+
+            for(int i = 0; i < inventoryContainer.slots.Length; i++)
+            {
+                Rectangle rectangle = inventoryUIRects[i];
+                inventoryContainer.DrawSlot(slotColor, rectangle.Location, rectangle.Width, i, spriteBatch);
             }
         }
 
