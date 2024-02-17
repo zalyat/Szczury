@@ -23,6 +23,11 @@ namespace Szczury.Items
                 this.itemType = itemType;
                 this.amount = amount;
             }
+            public void Clear()
+            {
+                itemType = null;
+                amount = 0;
+            }
 
             public Item itemType;
             public int amount;

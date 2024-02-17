@@ -38,6 +38,10 @@ namespace Szczury
 
             slots[index].stack = stack;
         }
+        public void RemoveItemStack(int index)
+        {
+            slots[index].stack.Clear();
+        }
 
         public void DrawSlot(Color slotColor, Point point, int size, int slotIndex, SpriteBatch spriteBatch)
         {

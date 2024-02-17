@@ -10,7 +10,7 @@ namespace Szczury
 {
     public partial class GameplayState : IState
     {
-        private bool debugMode = true;
+        private bool debugMode = false;
 
         private static GameplayState _mainSingleton;
         public static GameplayState Main

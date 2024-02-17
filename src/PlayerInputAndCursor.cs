@@ -18,11 +18,10 @@ namespace Szczury
                 showInventory = !showInventory;
             }
 
-            MouseState mState = Mouse.GetState();
-            leftMouseButtonPressedLastFrame = mState.LeftButton == ButtonState.Pressed; //this can not be in KeyPressCheck() for some reason
+            MouseState mState = Mouse.GetState(); //this can not be in KeyPressCheck() for some reason
             _cursorPosition = mState.Position;
 
-            if (mState.LeftButton == ButtonState.Pressed && itemChangeDelayTimer > itemChangeMinimumDelay && GetCurrentItem().itemType != null)
+            if (isLeftMouseButtonPressed && itemChangeDelayTimer > itemChangeMinimumDelay && GetCurrentItem().itemType != null)
             {
                 itemChangeDelayTimer = 0f;
                 GetCurrentItem().itemType.OnUse(leftMouseButtonPressedLastFrame, itemUseDelayTimer, this);
@@ -46,7 +45,12 @@ namespace Szczury
             KeyboardState state = Keyboard.GetState();
             flyingCheatKeyPressedLastFrame = state.IsKeyDown(Keys.F1);
             inventoryKeyPressedLastFrame = state.IsKeyDown(Keys.E);
+
+            MouseState mState = Mouse.GetState();
+            leftMouseButtonPressedLastFrame = mState.LeftButton == ButtonState.Pressed;
         }
+
+        public bool isLeftMouseButtonPressed => Mouse.GetState().LeftButton == ButtonState.Pressed;
 
         private Point _cursorPosition;
         public Point CursorPosition => new Point(Math.Clamp(_cursorPosition.X, 0, Util.screenWidth), Math.Clamp(_cursorPosition.Y, 0, Util.screenHeight));

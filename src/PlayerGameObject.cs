@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using SharpDX.XInput;
 using Microsoft.Xna.Framework.Input;
 using Szczury.Items;
+using SharpDX.Direct3D9;
 
 namespace Szczury
 {
@@ -44,10 +45,12 @@ namespace Szczury
                 DrawToolbar(spriteBatch);
             }
 
-            //spriteBatch.Draw(TextureSet.GetTexture("Ay"), new Rectangle(Camera.OnScreen(new Point((int)MathF.Floor(Center.X), 
-              //  (int)MathF.Floor(Center.Y))), new Point(16)), Color.Aqua);
+            if (isStackOnCursor == true) DrawStackOnCursor(spriteBatch);
 
-            if(debugMovement == true)
+            //spriteBatch.Draw(TextureSet.GetTexture("Ay"), new Rectangle(Camera.OnScreen(new Point((int)MathF.Floor(Center.X), 
+            //  (int)MathF.Floor(Center.Y))), new Point(16)), Color.Aqua);
+
+            if (debugMovement == true)
                 DebugInfoDraw(spriteBatch);
         }
 
@@ -71,6 +74,9 @@ namespace Szczury
             PlayerMovementInput();
             DoTimers();
             PlayerInput();
+
+            if (showInventory == true) InventoryInput();
+
             KeyPressCheck();
             SetTileBelow();
         }            

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,6 +23,9 @@ namespace Szczury
 
         public ItemContainer inventoryContainer = new ItemContainer("Player's inventory", 12);
         private Rectangle[] inventoryUIRects;
+
+        private Item.Stack stackOnCursor;
+        private bool isStackOnCursor;
 
         public int toolbarLength = 4;
         private int currentToolbarIndex = 0;
@@ -49,7 +53,7 @@ namespace Szczury
             inventoryUIRects = uiBuffer;
         }
 
-        public void DrawInventory(SpriteBatch spriteBatch)
+        private void DrawInventory(SpriteBatch spriteBatch)
         {
             if(inventoryUIRects == null)
             {
@@ -63,7 +67,7 @@ namespace Szczury
             }
         }
 
-        public void DrawToolbar(SpriteBatch spriteBatch)
+        private void DrawToolbar(SpriteBatch spriteBatch)
         {
             int slotSize = UIStyle.containerSlotSize;
             int slotMargin = UIStyle.conatinerSlotMargin;
@@ -74,7 +78,7 @@ namespace Szczury
             }
         }
 
-        public void DrawToolbarMarker(SpriteBatch spriteBatch)
+        private void DrawToolbarMarker(SpriteBatch spriteBatch)
         {
             int slotSize = UIStyle.containerSlotSize;
             int slotMargin = UIStyle.conatinerSlotMargin;
@@ -85,12 +89,72 @@ namespace Szczury
             spriteBatch.Draw(markerTexture, new Rectangle(new Point(x, y), new Point(markerSize)), Color.Gold);
         }
 
+        private void DrawStackOnCursor(SpriteBatch spriteBatch)
+        {
+            Texture2D texture = stackOnCursor.itemType.mainTexture;
+            int slotSize = UIStyle.containerSlotSize + 16;
+            spriteBatch.Draw(texture, new Rectangle(CursorPosition, new Point(slotSize)), Color.White);
+            spriteBatch.DrawString(TextureSet.debugFont, stackOnCursor.amount.ToString(), 
+                new Vector2(CursorPosition.X + slotSize-8, CursorPosition.Y + slotSize-8), Color.White);
+        }
+
         /// <summary>
         /// Input related to inventory (mostly mouse clicks on item slots)
         /// </summary>
-        private void IntentoryInput()
+        private void InventoryInput()
         {
+            if (isLeftMouseButtonPressed == true && leftMouseButtonPressedLastFrame == false)
+            { 
+                SlotClickCheck(); 
+            }
+            
+        }
 
+        private void SlotClickCheck()
+        {           
+            for(int i = 0; i < inventoryUIRects.Length; i++)
+            {
+                Rectangle rectangle = inventoryUIRects[i];
+                if (rectangle.Contains(CursorPosition))
+                {
+                    SlotClickAction(rectangle, i);
+                    break;
+                }
+            }
+        }
+
+        private void SlotClickAction(Rectangle slotRect, int slotIndex)
+        {
+            Item.Stack stack = inventoryContainer.slots[slotIndex].stack;
+            if (stack.itemType != null)
+            {
+                if (isStackOnCursor == false)
+                {
+                    stackOnCursor = stack;
+                    inventoryContainer.RemoveItemStack(slotIndex);
+                    isStackOnCursor = true;
+                }
+                if(isStackOnCursor == true)
+                {
+                    Item.Stack oldStack = stack;
+                    stack = stackOnCursor;
+                    stackOnCursor = stack;
+                }
+            }
+            if(stack.itemType == null)
+            {
+                if(isStackOnCursor == true)
+                {
+                    inventoryContainer.AddItemStack(new Item.Stack(stackOnCursor.itemType, stackOnCursor.amount), slotIndex, false);
+                    RemoveStackOnCursor();
+                }
+            }
+        }
+
+        private void RemoveStackOnCursor()
+        {
+            stackOnCursor.Clear();
+            isStackOnCursor = false;
         }
 
         public Item.Stack GetCurrentItem()
