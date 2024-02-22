@@ -12,7 +12,7 @@ namespace Szczury.Blocks
         public override string Name => "Basalt";
 
         public override float Hardness => 6.0f;
-
+        public override float MaxDamage => 2.0f;
         public override Color ColorRepresentation => Color.Gray;
     }
 }

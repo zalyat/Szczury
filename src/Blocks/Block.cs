@@ -10,9 +10,10 @@ namespace Szczury.Blocks
         public Texture2D mainTexture;
         public abstract string Name { get; }
         public abstract float Hardness { get; }
+        public abstract float MaxDamage { get; }
         public abstract Color ColorRepresentation { get; }
 
-        public virtual void OnBreak()
+        public virtual void OnBreak(Point location, TileWorld world)
         {
 
         }

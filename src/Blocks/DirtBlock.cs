@@ -7,5 +7,6 @@ namespace Szczury.Blocks
         public override string Name { get => "Dirt"; }
         public override float Hardness { get => 2.0f; }
         public override Color ColorRepresentation => Color.SandyBrown;
+        public override float MaxDamage => 1f;
     }
 }

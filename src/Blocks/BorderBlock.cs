@@ -12,7 +12,7 @@ namespace Szczury.Blocks
         public override string Name => "Border";
 
         public override float Hardness => 2024f;
-
+        public override float MaxDamage => 2024f;
         public override Color ColorRepresentation => Color.Red;
     }
 }

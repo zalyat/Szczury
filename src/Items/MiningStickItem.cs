@@ -13,6 +13,8 @@ namespace Szczury.Items
     {
         public override string Name => "Mining Stick";
         public override float UseDelay => 0.5f;
+        public virtual float Power => 2f; //max hardness of a block that it can break
+        public virtual float MiningDamage => 0.24f; //how much damage it gives to a block
         public virtual float Range => 4 * Util.tileSize;
         protected Texture2D objectTexture;
 
@@ -34,9 +36,9 @@ namespace Szczury.Items
             GameplayState.Main.CreateGameObject(new MiningStickObject(player.Position, player.CursorPositionToWorldPosition(), player.currentWorld, UseDelay));
             Point tileLocation = player.CursorPositionToTilePosition();
             TileWorld.Tile tile = player.currentWorld.GetTile(tileLocation);
-            if (tile.blockType.Name != "Air" && tile.blockType.Name != "Border")
+            if (tile.blockType.Name != "Air" && tile.blockType.Name != "Border" && tile.blockType.Hardness <= Power)
             {
-                player.currentWorld.SetTile(tileLocation, Blocks.BlocksRegistry.GetBlock("Air"));
+                player.currentWorld.DamageTile(tileLocation, MiningDamage);
             }
         }
     }

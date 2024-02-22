@@ -12,5 +12,6 @@ namespace Szczury.Blocks
 
         public override float Hardness { get => 0f; }
         public override Color ColorRepresentation => Color.Black;
+        public override float MaxDamage => 100;
     }
 }

@@ -20,6 +20,7 @@ namespace Szczury
             TextureSet.debugFont = contentManager.Load<SpriteFont>("debugFont");
 
             Add("default", "default");
+            Add("tile_damage", "tile_damage");
             Add("dirt_block", "tile_dirt");
             Add("basalt_block", "basalt_block");
 

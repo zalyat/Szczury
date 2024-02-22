@@ -30,21 +30,25 @@ namespace Szczury
             {
                 blockType = b;
                 damage = -1f;
+                damagePhase = 0;
             }
             public Block blockType;
             public float damage; //if damage is higher than hardness, the tile will break
+            public byte damagePhase; //used only for damage texture (when damage is higher than 0)
         }
 
         private Tile[,] world = new Tile[width, height];
         private SpriteBatch _spriteBatch;
-        
+        private Texture2D _damageTexture;
+
         public void SetSpriteBatch(SpriteBatch spriteBatch)
         {
             _spriteBatch = spriteBatch;
         }
 
         public void Initialize()
-        {            
+        {
+            _damageTexture = TextureSet.GetTexture("tile_damage");
             WorldGenerator worldGenerator = new ClassicWorldGenerator();
             world = worldGenerator.Generate(width, height);
         }
@@ -52,7 +56,7 @@ namespace Szczury
         public static Point WorldPositionToTilePosition(Vector2 position)
         {
             int tileSize = Util.tileSize;
-            return new Point((int)MathF.Ceiling(position.X/tileSize)-1, (int)MathF.Ceiling(position.Y/tileSize)-1);
+            return new Point((int)MathF.Ceiling(position.X / tileSize) - 1, (int)MathF.Ceiling(position.Y / tileSize) - 1);
         }
 
         public void ChangeTile(Point location, Block block)
@@ -82,6 +86,43 @@ namespace Szczury
                 return;
             }
             world[location.X, location.Y].blockType = block;
+        }
+
+        /// <summary>
+        /// Add damage to a tile & break it if it becomes too high
+        /// </summary>
+        /// <returns>Tile damage after damaging it</returns>
+        public float DamageTile(Point location, float value)
+        {
+            if (isInWorldBoundaries(location) == false) return -3f;
+
+            world[location.X, location.Y].damage += value;
+            float damage = world[location.X, location.Y].damage;
+            Block blockType = world[location.X, location.Y].blockType;
+
+            if (damage >= blockType.MaxDamage) BreakTile(location);
+
+            if (damage > 0) world[location.X, location.Y].damagePhase = GetDamagePhase(damage, blockType.MaxDamage);
+
+            return damage;
+        }
+
+        /// <summary>
+        /// Break a block with already specified block type (faster)
+        /// </summary>
+        private void BreakTile(Point location, Block blockType)
+        {
+            blockType.OnBreak(location, this);
+            world[location.X, location.Y].damage = 0;
+            world[location.X, location.Y].blockType = BlocksRegistry.GetBlock("Air");
+        }
+
+        /// <summary>
+        /// Break a block and get it's block type to call a it's OnBreak() method
+        /// </summary>
+        public void BreakTile(Point location)
+        {
+            BreakTile(location, world[location.X, location.Y].blockType);
         }
 
         public bool isAir(Point location)
@@ -124,11 +165,27 @@ namespace Szczury
             if (tile.blockType.GetType() == typeof(AirBlock))
             {
                 return;
-            }            
+            }
+            Point position = Camera.OnScreen(new Point(x * Util.tileSize, y * Util.tileSize));
+            Point size = new Point(Util.tileSize, Util.tileSize);
             _spriteBatch.Draw(tile.blockType.mainTexture,
-                new Rectangle(Camera.OnScreen(new Point(x * Util.tileSize, y * Util.tileSize)),
-                new Point(Util.tileSize, Util.tileSize)),
+                new Rectangle(position, size),
                 Color.White);
+            if (tile.damage > 0)
+            {
+                byte damagePhase = tile.damagePhase;
+                _spriteBatch.Draw(_damageTexture, position.ToVector2(), new Rectangle(Util.tileSize * damagePhase, 0, size.X, size.Y), Color.White);
+            }
+        }
+
+        private byte GetDamagePhase(float damage, float maxDamage)
+        {
+            if (damage < 0.25f * maxDamage && damage > 0) return 0;
+            if (damage < 0.5f * maxDamage) return 1;
+            if (damage < 0.75f * maxDamage) return 2;
+            if (damage >= 0.75f * maxDamage) return 3;
+
+            return 0;
         }
 
         ///
