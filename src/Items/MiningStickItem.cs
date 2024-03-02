@@ -31,15 +31,43 @@ namespace Szczury.Items
 
         private void Mine(PlayerGameObject player)
         {
-            if (Vector2.Distance(player.Center, player.CursorPositionToWorldPosition()) > Range) return;
-
-            GameplayState.Main.CreateGameObject(new MiningStickObject(player.Position, player.CursorPositionToWorldPosition(), player.currentWorld, UseDelay));
-            Point tileLocation = player.CursorPositionToTilePosition();
+            //if (Vector2.Distance(player.Center, player.CursorPositionToWorldPosition()) > Range) return;
+            
+            //old single tile method
+            /*Point tileLocation = player.CursorPositionToTilePosition();
             TileWorld.Tile tile = player.currentWorld.GetTile(tileLocation);
             if (tile.blockType.Name != "Air" && tile.blockType.Name != "Border" && tile.blockType.Hardness <= Power)
             {
                 player.currentWorld.DamageTile(tileLocation, MiningDamage);
+            }*/
+
+            //new multiple lines destroying method
+            Point startLocation = new Point(player.PositionInTiles.X, player.PositionInTiles.Y + 1);
+            Vector2 targetVector = GetLimitedTargetVector(player.Center, player.CursorPositionToWorldPosition());
+            Point endLocation = TileWorld.WorldPositionToTilePosition(targetVector);
+
+            Point[] tilePoints = Util.Bresenham(startLocation, endLocation);
+            for(int i = 0; i < tilePoints.Length; i++)
+            {
+                TileWorld.Tile tile = player.currentWorld.GetTile(tilePoints[i]);
+                if (tile.blockType.Name != "Air" && tile.blockType.Name != "Border" && tile.blockType.Hardness <= Power)
+                    player.currentWorld.DamageTile(tilePoints[i], MiningDamage);
             }
+
+            GameplayState.Main.CreateGameObject(new MiningStickObject(player.Position, targetVector, player.currentWorld, UseDelay));
+        }
+
+        /// <summary>
+        /// This allows player to click anywhere on screen and swing his tool without caring about the distance
+        /// </summary>
+        private Vector2 GetLimitedTargetVector(Vector2 playerPos, Vector2 targetPos)
+        {
+            if(Vector2.Distance(playerPos, targetPos) > Range)
+            {
+                Debug.WriteLine($"{playerPos} {targetPos} {Vector2.Normalize(targetPos - playerPos)} {Vector2.Normalize(targetPos - playerPos) * Range}");
+                return playerPos + Vector2.Normalize(targetPos - playerPos) * Range;
+            }
+            return targetPos;
         }
     }
 }
