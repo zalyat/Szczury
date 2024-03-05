@@ -14,15 +14,13 @@ namespace Szczury
     public partial class PlayerGameObject : GameObject
     {
         private const bool debugMovement = false;
-        private bool inventoryKeyPressedLastFrame = false;
-        private bool leftMouseButtonPressedLastFrame = false;
-        private int lastMouseScroll;
-
+        
         private float itemChangeDelayTimer = 0.0f;
         private float itemChangeMinimumDelay = 0.1f;
 
         private float itemUseDelayTimer = 0f;
 
+        public float placingDistance = 6 * Util.tileSize;
 
         public PlayerGameObject(Vector2 startingPosition, TileWorld world) : base(startingPosition, world)
         {
@@ -59,7 +57,9 @@ namespace Szczury
             base.Start();
 
             SetPosition(TileWorld.width / 2 * Util.tileSize, 70 * Util.tileSize);
-            inventoryContainer.AddItemStack(new Item.Stack(ItemsRegistry.GetItem("Mining Stick"), 2), 0, true);
+            inventoryContainer.AddItemStack(new Item.Stack(ItemsRegistry.GetItem("Magic Stick"), 1), 0, true);
+            inventoryContainer.AddItemStack(new Item.Stack(ItemsRegistry.GetItem("Dirt"), 100), 1, true);
+            inventoryContainer.AddItemStack(new Item.Stack(ItemsRegistry.GetItem("Basalt"), 100), 2, true);
 
             GameplayState gs = GameState.currentState as GameplayState;
             _world = gs.tileWorld;

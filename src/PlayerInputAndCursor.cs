@@ -10,6 +10,11 @@ namespace Szczury
 {
     public partial class PlayerGameObject
     {
+        private bool inventoryKeyPressedLastFrame = false;
+        private bool leftMouseButtonPressedLastFrame = false;
+        private bool rightMouseButtonPressedLastFrame = false;
+        private int lastMouseScroll;
+
         public void PlayerInput()
         {
             KeyboardState state = Keyboard.GetState();
@@ -24,8 +29,14 @@ namespace Szczury
             if (isLeftMouseButtonPressed && itemChangeDelayTimer > itemChangeMinimumDelay && GetCurrentItem().itemType != null)
             {
                 itemChangeDelayTimer = 0f;
-                GetCurrentItem().itemType.OnUse(leftMouseButtonPressedLastFrame, itemUseDelayTimer, this);
+                GetCurrentItem().itemType.OnUse(leftMouseButtonPressedLastFrame, itemUseDelayTimer, this, false);
             }
+            if (isRightMouseButtonPressed && itemChangeDelayTimer > itemChangeMinimumDelay && GetCurrentItem().itemType != null)
+            {
+                itemChangeDelayTimer = 0f;
+                GetCurrentItem().itemType.OnUse(leftMouseButtonPressedLastFrame, itemUseDelayTimer, this, true);
+            }
+
 
             int scrollValue = mState.ScrollWheelValue;
             if (scrollValue - lastMouseScroll < 0)
@@ -51,6 +62,7 @@ namespace Szczury
         }
 
         public bool isLeftMouseButtonPressed => Mouse.GetState().LeftButton == ButtonState.Pressed;
+        public bool isRightMouseButtonPressed => Mouse.GetState().RightButton == ButtonState.Pressed;
 
         private Point _cursorPosition;
         public Point CursorPosition => new Point(Math.Clamp(_cursorPosition.X, 0, Util.screenWidth), Math.Clamp(_cursorPosition.Y, 0, Util.screenHeight));

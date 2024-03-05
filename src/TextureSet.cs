@@ -28,6 +28,9 @@ namespace Szczury
 
             Add("item_mining_stick", "mining_stick_item");
             Add("mining_stick_object", "mining_stick_object");
+            Add("item_dirt", "item_dirt");
+            Add("item_basalt", "item_basalt");
+
             Add("toolbarMarker", "toolbarMarker");
 
         }

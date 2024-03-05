@@ -28,7 +28,7 @@ namespace Szczury
         private bool isStackOnCursor;
 
         public int toolbarLength = 4;
-        private int currentToolbarIndex = 0;
+        public int currentToolbarIndex = 0;
 
 
         public void CalculateInventoryUI()

@@ -10,6 +10,9 @@ using System.Diagnostics;
 
 namespace Szczury.Items
 {
+    /// <summary>
+    /// TO DO: Change Stack from struct to class
+    /// </summary>
     public abstract class Item
     {
         public Texture2D mainTexture;
@@ -33,13 +36,19 @@ namespace Szczury.Items
             public int amount;
         }
 
+        public Item()
+        {
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="singleTime">is this the first frame when mouse button was pressed?</param>
         /// <param name="lastUse">timer of the last player's item use</param>
         /// <param name="player">a player that is using the item</param>
-        public virtual void OnUse(bool singleTime, float lastUse, PlayerGameObject player)
+        /// <param name="alternativeUse">did player used the right mouse button</param>
+        public virtual void OnUse(bool singleTime, float lastUse, PlayerGameObject player, bool alternativeUse)
         {
             
         }

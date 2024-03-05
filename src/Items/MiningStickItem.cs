@@ -3,9 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Szczury.Items
 {
@@ -18,11 +16,11 @@ namespace Szczury.Items
         public virtual float Range => 4 * Util.tileSize;
         protected Texture2D objectTexture;
 
-        public override void OnUse(bool singleTime, float lastUse, PlayerGameObject player)
+        public override void OnUse(bool singleTime, float lastUse, PlayerGameObject player, bool alternativeUse)
         {
-            base.OnUse(singleTime, lastUse, player);
+            base.OnUse(singleTime, lastUse, player, alternativeUse);
 
-            if (lastUse > UseDelay)
+            if (alternativeUse == false && lastUse > UseDelay)
             {         
                 Mine(player);
                 player.ResetItemUseDelay();
