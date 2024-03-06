@@ -8,12 +8,10 @@ using System.Threading.Tasks;
 
 namespace Szczury.Items
 {
-    /// <summary>
-    /// TO DO: Don't let the player build in the air
-    /// </summary>
     public abstract class BlockItem : Item
     {
         public override float UseDelay => 0.2f;
+        public override DrawingMode StackDrawingMode => DrawingMode.TextureSize;
 
         public Blocks.Block MainBlock { get => block; }
         protected Blocks.Block block;
@@ -43,7 +41,7 @@ namespace Szczury.Items
 
             if (distance > player.placingDistance) return;
 
-            if (player.currentWorld.isAir(location) == false) return;
+            if (player.currentWorld.isAir(location) == false || player.currentWorld.hasTileNeighbours(location) == false) return;
 
             player.currentWorld.ChangeTile(location, MainBlock);
             player.inventoryContainer.ChangeItemStackAmount(player.currentToolbarIndex, -1);

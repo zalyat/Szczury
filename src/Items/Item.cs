@@ -18,6 +18,10 @@ namespace Szczury.Items
         public Texture2D mainTexture;
         public abstract string Name { get; }
         public abstract float UseDelay { get; }
+        /// <summary>
+        /// Specifies stack drawing mode (default: DrawingMode.FullSlot)
+        /// </summary>
+        public virtual DrawingMode StackDrawingMode { get => DrawingMode.FullSlot; }
 
         public struct Stack
         {
@@ -41,6 +45,8 @@ namespace Szczury.Items
 
         }
 
+        public enum DrawingMode { FullSlot, TextureSize }
+
         /// <summary>
         /// 
         /// </summary>
@@ -55,9 +61,30 @@ namespace Szczury.Items
 
         public static void DrawStack(Stack stack, Point point, int size, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(stack.itemType.mainTexture, new Rectangle(point, new Point(size)), Color.White);
+            int[] drawingInfo = stack.itemType.DrawingModeInfo(size);
+            Point posPoint = point; //used for texture position
+            if (stack.itemType.StackDrawingMode != DrawingMode.FullSlot)
+                posPoint = new Point(point.X + drawingInfo[0], point.Y + drawingInfo[0]);
+
+            spriteBatch.Draw(stack.itemType.mainTexture, new Rectangle(posPoint, new Point(drawingInfo[1])), Color.White);
             if(stack.amount > 1)
                 spriteBatch.DrawString(TextureSet.debugFont, stack.amount.ToString(), new Vector2(point.X + size-size/3, point.Y + size-size/3), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+        }
+
+        /// <summary>
+        /// Returns values to specified StackDrawingMode indexes:[0 - size, 1 - position offset]
+        /// </summary>
+        /// <returns></returns>
+        private int[] DrawingModeInfo(int originalSize)
+        {
+            switch(StackDrawingMode)
+            {
+                case DrawingMode.FullSlot:
+                    return new int[] { 0, originalSize };
+                case DrawingMode.TextureSize:
+                    return new int[] { (originalSize - mainTexture.Width) / 2, mainTexture.Width };
+            }
+            return new int[] { 0, originalSize };
         }
     }
 }

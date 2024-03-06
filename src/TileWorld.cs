@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 
 namespace Szczury
@@ -128,8 +127,29 @@ namespace Szczury
         public bool isAir(Point location)
         {
             if (isInWorldBoundaries(location) == false) return true;
-            if (world[location.X, location.Y].blockType == BlocksRegistry.GetBlock("Air")) return true;
+            Block blockType = world[location.X, location.Y].blockType;
+            if (blockType == BlocksRegistry.GetBlock("Air") || blockType == BlocksRegistry.GetBlock("Border")) return true;
             return false;
+        }
+
+        /// <summary>
+        /// Check if neighbouring tiles are something different than empty block
+        /// </summary>
+        public bool hasTileNeighbours(Point location)
+        {
+            Point[] neighbours = getTileNeigbours(location);
+            for(int i = 0; i < neighbours.Length; i++)
+            {
+                if (isAir(neighbours[i]) == false) return true;
+            }
+            return false;
+        }
+
+        public Point[] getTileNeigbours(Point location)
+        {
+            int x = location.X;
+            int y = location.Y;
+            return new Point[4] { new Point(x - 1, y), new Point(x, y - 1), new Point(x + 1, y), new Point(x, y + 1) }; 
         }
 
         public bool isInWorldBoundaries(Point location)
