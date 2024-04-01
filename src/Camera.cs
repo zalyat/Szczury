@@ -19,5 +19,13 @@ namespace Szczury
         {
             return new Point(point.X - (int)MathF.Ceiling(cameraPosition.X), point.Y - (int)MathF.Ceiling(cameraPosition.Y));
         }
+
+        /// <summary>
+        /// Get vector relatively to the screen
+        /// </summary>
+        public static Vector2 OnScreen(Vector2 vec)
+        {
+            return new Vector2(vec.X - (int)MathF.Ceiling(cameraPosition.X), vec.Y - (int)MathF.Ceiling(cameraPosition.Y));
+        }
     }
 }

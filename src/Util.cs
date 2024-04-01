@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.Cryptography.Xml;
 using System.Text;
 using Microsoft.Xna.Framework;
 
@@ -93,6 +92,53 @@ namespace Szczury
             }
 
             return points.ToArray();
+        }
+
+        public static Vector2 Vector(this Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.Left:
+                    return new Vector2(-1, 0);
+                case Direction.Right:
+                    return new Vector2(1, 0);
+                case Direction.Up:
+                    return new Vector2(0, -1);
+                case Direction.Down:
+                    return new Vector2(0, 1);
+            }
+            return new Vector2(1, 0);
+        }
+
+        public static Direction Reverse(this Direction direction)
+        {
+            if (direction == Direction.Up) return Direction.Down;
+            if (direction == Direction.Down) return Direction.Up;
+            if (direction == Direction.Left) return Direction.Right;
+            if (direction == Direction.Right) return Direction.Left;
+
+            return Direction.Right;
+        }
+
+        public static bool isClockwise(Direction dir1, Direction dir2)
+        {
+            switch(dir1)
+            {
+                case Direction.Left:
+                    if (dir2 == Direction.Up) return true;
+                    return false;
+                case Direction.Up:
+                    if (dir2 == Direction.Right) return true;
+                    return false;
+                case Direction.Right:
+                    if (dir2 == Direction.Down) return true;
+                    return false;
+                case Direction.Down:
+                    if (dir2 == Direction.Left) return true;
+                    return false;
+            }
+
+            return false;
         }
     }
 }

@@ -33,6 +33,8 @@ namespace Szczury
 
             Add("toolbarMarker", "toolbarMarker");
 
+            Add("monster_toxic_snail", "monster_toxic_snail");
+
         }
 
         private static void Add(string name, string pipepath)

@@ -14,6 +14,7 @@ namespace Szczury
         public Rectangle hitbox;
         protected Texture2D mainTexture;
         public TileWorld currentWorld;
+        public bool drawable = true;
 
         public GameObject(Vector2 startingPosition, TileWorld world)
         {
@@ -29,13 +30,13 @@ namespace Szczury
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+            if (drawable == false) return;
+
             textureBox.X = (int)Math.Floor(position.X);
             textureBox.Y = (int)Math.Floor(position.Y);
             spriteBatch.Draw(mainTexture, new Rectangle(
                 Camera.OnScreen(new Point(textureBox.X, textureBox.Y)),
                 new Point(textureBox.Width, textureBox.Height)), Color.Magenta);
-
-            //Debug.WriteLine($"{textureBox.X + (int)MathF.Ceiling(Camera.cameraPosition.X)}   |   {textureBox.Y + (int)MathF.Ceiling(Camera.cameraPosition.Y)}");
         }
 
         public virtual void Update(GameTime gameTime)
@@ -45,7 +46,6 @@ namespace Szczury
 
         private void UpdateHitboxPosition()
         {
-            if (hitbox == null) return;
             hitbox.X = (int)MathF.Floor(Position.X);
             hitbox.Y = (int)MathF.Floor(Position.Y);
         }
@@ -80,12 +80,21 @@ namespace Szczury
             UpdateHitboxPosition();
         }
 
+        public virtual void Destroy()
+        {
+            GameplayState.Main.DeleteGameObject(this);
+        }
+
         /// <summary>
         /// Public property
         /// </summary>
         public Vector2 Position
         {
             get => position; 
+        }
+        public Vector2 Center
+        {
+            get => new Vector2(position.X + textureBox.Width/2, position.Y + textureBox.Height/2);
         }
     }
 }

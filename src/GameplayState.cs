@@ -10,7 +10,7 @@ namespace Szczury
 {
     public partial class GameplayState : IState
     {
-        private bool debugMode = false;
+        private bool debugMode = true;
 
         private static GameplayState _mainSingleton;
         public static GameplayState Main
@@ -24,7 +24,8 @@ namespace Szczury
         public TileWorld tileWorld = new TileWorld();
         private ChunkBuffering _chunkBuffering;
 
-        private PlayerGameObject player;
+        private PlayerGameObject _player;
+        private WorldMonsterSpawner _monsterSpawner;
         private TileWorld.Chunk _lastPlayerChunk;
 
         private GraphicsDevice _graphicsDevice;
@@ -41,8 +42,8 @@ namespace Szczury
 
         public void Draw(SpriteBatch _spriteBatch)
         {
-            if (TileWorld.isDifferentChunk(tileWorld.GetChunkAtTilePosition(player.PositionInTiles), _lastPlayerChunk))
-                _chunkBuffering.UpdateChunkBuffer(player.PositionInTiles);
+            if (TileWorld.isDifferentChunk(tileWorld.GetChunkAtTilePosition(_player.PositionInTiles), _lastPlayerChunk))
+                _chunkBuffering.UpdateChunkBuffer(_player.PositionInTiles);
 
             DrawWorld();           
 
@@ -57,7 +58,7 @@ namespace Szczury
 
             //PerFrameCounter.Report();
             //PerFrameCounter.Clear();
-            _lastPlayerChunk = tileWorld.GetChunkAtTilePosition(player.PositionInTiles);
+            _lastPlayerChunk = tileWorld.GetChunkAtTilePosition(_player.PositionInTiles);
         }
 
         private void DrawDebug(SpriteBatch _spriteBatch)
@@ -86,8 +87,11 @@ namespace Szczury
 
         public void Start()
         {
-            player = CreateGameObject(new PlayerGameObject(new Vector2(5f, 10f), tileWorld)) as PlayerGameObject;
+            _player = CreateGameObject(new PlayerGameObject(new Vector2(5f, 10f), tileWorld)) as PlayerGameObject;
+            _monsterSpawner = CreateGameObject(new WorldMonsterSpawner(Vector2.Zero, tileWorld)) as WorldMonsterSpawner;
+            _monsterSpawner.SpawnMonsters(_player.PositionInTiles.X);
         }
+
 
         public void Update(GameTime gameTime)
         {
@@ -96,7 +100,7 @@ namespace Szczury
                 go.Update(gameTime);
             }
 
-            Camera.CenterCameraOn(player.Center);
+            Camera.CenterCameraOn(_player.Center);
 
             DeleteObjects();
             CreateObjects();

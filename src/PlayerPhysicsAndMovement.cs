@@ -152,7 +152,7 @@ namespace Szczury
         /// <summary>
         /// Center of the player's GameObject
         /// </summary>
-        public Vector2 Center
+        public new Vector2 Center
         {
             get => new Vector2(Position.X + 8, Position.Y + 24);
         }

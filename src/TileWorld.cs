@@ -160,6 +160,41 @@ namespace Szczury
             return true;
         }
 
+        /// <summary>
+        /// Recursive stuff that returns first non-air tile with a air tile above. If it cannot find one, it will return a tile out of boundaries.
+        /// So remember always check if the returned tile is in boundaries when using this
+        /// </summary>
+        /// <param name="start">first check</param>
+        public Point getClosestGround(Point start)
+        {
+            return getClosestGround(start, 0);
+        }
+
+        private Point getClosestGround(Point start, int n)
+        {
+            if (start.Y >= height) return start;
+
+            if (start.Y >= 0) n++;
+            if (n == 0) return getClosestGround(start + new Point(0, 1), n);
+
+            if (isGroundFree(start) == true)
+                return start;
+            else
+                return getClosestGround(start + new Point(0, 1), n);
+        }
+
+        /// <summary>
+        /// Warning: has no boundary check. Potentially unsafe
+        /// </summary>
+        public bool isGroundFree(Point location)
+        {
+            if(isAir(location) == false && isAir(location + new Point(0, -1)) == true)
+            {
+                return true;
+            }
+            return false;
+        }
+
         ///<summary>Used for colliders etc.</summary> <returns>Rectangle that is boundaries for a tile</returns>
         public Rectangle GetTileRectangle(Point location)
         {

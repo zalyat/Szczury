@@ -40,7 +40,7 @@ namespace Szczury.Items
             }*/
 
             //new multiple lines destroying method
-            Point startLocation = new Point(player.PositionInTiles.X, player.PositionInTiles.Y + 1);
+            Point startLocation = new Point(player.PositionInTiles.X, player.PositionInTiles.Y);
             Vector2 targetVector = GetLimitedTargetVector(player.Center, player.CursorPositionToWorldPosition());
             Point endLocation = TileWorld.WorldPositionToTilePosition(targetVector);
 
